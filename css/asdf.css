@@ -1,0 +1,7 @@
+.visible-menu {
+	left:0px;
+}
+
+.hidden-menu {
+	left:-400px;
+}

@@ -2,11 +2,78 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bcb23809-c9d5-42aa-8e56-fb4a3931f249" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Generated_files.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/bikedata.php" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/main.coffee" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/watcherTasks.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/map_test.html" afterPath="$PROJECT_DIR$/map_test.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/example-sites/8020select.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/example-sites/adoptahydrant.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ico/apple-touch-icon-114-precomposed.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ico/apple-touch-icon-144-precomposed.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ico/apple-touch-icon-57-precomposed.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ico/apple-touch-icon-72-precomposed.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/bootstrap-docs-readme.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/bootstrap-example-carousel.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/bootstrap-example-fluid.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/bootstrap-example-justified-nav.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/bootstrap-example-marketing-narrow.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/bootstrap-example-marketing.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/bootstrap-example-signin.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/bootstrap-example-starter.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/bootstrap-example-sticky-footer.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/bootstrap-mdo-sfmoma-01.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/bootstrap-mdo-sfmoma-02.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/bootstrap-mdo-sfmoma-03.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/example-sites/breakingnews.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/browser-icon-chrome.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/browser-icon-firefox.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/browser-icon-safari.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/bs-docs-bootstrap-features.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/bs-docs-masthead-pattern.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/bs-docs-responsive-illustrations.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/bs-docs-twitter-github.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ico/favicon.ico" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ico/favicon.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/example-sites/fleetio.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/example-sites/gathercontent.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/glyphicons-halflings-white.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/glyphicons-halflings.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/grid-baseline-20px.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/example-sites/jshint.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/example-sites/kippt.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/less-logo-large.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/responsive-illustrations.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/slide-01.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/slide-02.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/examples/slide-03.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/img/example-sites/soundready.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/README.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/application.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/css/asdf.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap-affix.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap-alert.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap-button.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap-carousel.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap-collapse.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap-dropdown.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap-modal.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap-popover.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/css/bootstrap-responsive.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap-scrollspy.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap-tab.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap-tooltip.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap-transition.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap-typeahead.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/css/bootstrap.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/bootstrap.min.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/css/bootswatch.less" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/css/docs.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/holder/holder.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/html5shiv.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/jquery-2.0.2.min.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/jquery.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/maps.html" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/onReady.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/google-code-prettify/prettify.css" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/js/google-code-prettify/prettify.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/css/variables.less" />
     </list>
     <ignored path="YRS2013.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -42,11 +109,28 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.coffee" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="main.coffee" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/main.coffee">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="25" column="32" selection-start="902" selection-end="902" vertical-scroll-proportion="0.18650089">
+            <state line="11" column="20" selection-start="339" selection-end="339" vertical-scroll-proportion="0.0">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="maps.html" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/maps.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="103" column="30" selection-start="3505" selection-end="3505" vertical-scroll-proportion="0.528757">
+              <folding>
+                <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#button#0;n#ul#0;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#li#2;n#ul#0;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#li#4;n#ul#0;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#li#5;n#ul#0;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#h1#0;n#div#0;n#div#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -91,6 +175,7 @@
         <option value="$PROJECT_DIR$/map_test.html" />
         <option value="$PROJECT_DIR$/bikedata.php" />
         <option value="$PROJECT_DIR$/js/main.coffee" />
+        <option value="$PROJECT_DIR$/maps.html" />
       </list>
     </option>
   </component>
@@ -170,20 +255,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="YRS2013" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="YRS2013" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
         </subPane>
       </pane>
       <pane id="Scope" />
@@ -202,7 +273,13 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\wamp\www\YRS2013" />
       <recent name="C:\Users\Zachary\PhpstormProjects\YRS2013" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\wamp\www\YRS2013\js" />
+      <recent name="C:\wamp\www\YRS2013" />
+      <recent name="C:\wamp\www\YRS2013\" />
     </key>
   </component>
   <component name="RunManager" selected="JavaScript Debug.map_test.html">
@@ -462,8 +539,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/main.coffee">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="25" column="32" selection-start="902" selection-end="902" vertical-scroll-proportion="0.18650089">
+        <state line="11" column="20" selection-start="339" selection-end="339" vertical-scroll-proportion="0.0">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/maps.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="103" column="30" selection-start="3505" selection-end="3505" vertical-scroll-proportion="0.528757">
+          <folding>
+            <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#button#0;n#ul#0;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#li#2;n#ul#0;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#li#4;n#ul#0;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#li#5;n#ul#0;n#div#0;n#div#0;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#h1#0;n#div#0;n#div#1;n#div#0;n#div#1;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
