@@ -5,7 +5,6 @@
 
   plotFilms = function(map) {
     return $.get('filmdata.csv', function(data) {
-      console.log(data);
       return $.csv.toObjects(data, {}, function(err, data) {
         var item, marker, _i, _len, _results;
         _results = [];
@@ -32,7 +31,6 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         station = _ref[_i];
-        console.log(station);
         if (station.availableBikes > 0 && station.statusValue === "In Service") {
           thisPin = pinAvailable;
         } else {
@@ -74,18 +72,20 @@
   })();
 
   loadWeather = function() {
-    var feed;
-    feed = new google.feeds.Feed("http://weather.yahooapis.com/forecastrss?w=12761716&u=f");
-    return feed.load(function(result) {
-      if (!result.error) {
-        return console.log(result.feed.entries);
-      }
+    var feedUrl, jsonUrl;
+    feedUrl = "http://weather.yahooapis.com/forecastrss?w=12761716&u=f";
+    jsonUrl = "https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&q=" + encodeURIComponent(feedUrl) + "&callback=?";
+    return $.getJSON(jsonUrl, function(data) {
+      var match, re, weatherString;
+      weatherString = data.responseData.feed.entries[0].contentSnippet;
+      re = /Current Conditions:\n(.*?)\n/;
+      match = weatherString.match(re);
+      return $("#weather").text(match[1]);
     });
   };
 
   initialize = function() {
     var map, mapOptions;
-    google.load("feeds", "1");
     loadWeather();
     mapOptions = {
       center: new google.maps.LatLng(40.714346, -74.005966),
@@ -99,7 +99,7 @@
   };
 
   $(document).ready(function() {
-    return loadWeather();
+    return initialize();
   });
 
 }).call(this);

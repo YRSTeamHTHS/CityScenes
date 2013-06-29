@@ -25,10 +25,10 @@
 
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz8Msa0Cela-0hHkSB5pAFgcfU6NL_ud0&sensor=false"></script>
     <script type="text/javascript" src="js/jquery-1.10.1.js"></script>
-    <script type="text/javascript" src="js/onReady.js"></script>
+    <script type="text/javascript" src="js/jquery.csv-0.71.js"></script>
+    <script type="text/javascript" src="js/onReady.js"></script>-
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="js/maps/directions.js"></script>
-    <script type="text/javascript" src="js/jquery.csv-0.71.js"></script>
     <script type="text/javascript" src="js/main.js"> </script>
 </head>
 
@@ -52,7 +52,7 @@
                             <button class="btn">Go</button>
                         </form>
                     </li>
-                    <li><a href="causes.html">83 F, &nbsp;&nbsp; Sunny</a></li>
+                    <li><a id="weather"></a></li>
                     <li><a href="extras.html">Help</a></li>
                 </ul>
             </div>
@@ -109,7 +109,7 @@
         <div class="span9">
 
             <div style="margin-bottom:30px">
-                <div id="map-canvas"/>
+                <div id="map-canvas" style="height: 500px;"></div>
             </div>
 
         </div>
@@ -122,7 +122,6 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery.js"></script>
     <script src="js/bootstrap-transition.js"></script>
     <script src="js/bootstrap-alert.js"></script>
     <script src="js/bootstrap-modal.js"></script>
