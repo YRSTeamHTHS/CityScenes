@@ -16,7 +16,7 @@ $.getJSON('http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+
 						'<ol class="directions">';
 		//<span class="distance"></span><span class="duration"></span><span class="start"></span></li>'
 		console.log(legs.start_address);
-		$(leg_wrap).appendTo('li.directions');
+		$(leg_wrap).appendTo('div.directions');
 		
 		$.each(legs.steps, function (j, steps){
 			//step_distance[i][j] = steps.distance.text;
@@ -26,7 +26,7 @@ $.getJSON('http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+
 			$(step_wrap).appendTo('ol.directions');
 		})
 		leg_wrap = '<br /></ol>';
-		$(leg_wrap).appendTo('li.directions');
+		$(leg_wrap).appendTo('div.directions');
 	});
 	
 	
