@@ -66,7 +66,8 @@
     <div class="row-fluid">
         <div class="span3">
             <div id="side-menu" class="well sidebar-nav span3 visible-menu">
-                <ul class="nav nav-list">
+			<div class="container-fluid">
+				<div class="row-fluid">
                     <button id="btn-side-menu-toggle" class="btn"> &lsaquo;&lsaquo; </button>
 
                     <li>
@@ -81,22 +82,24 @@
                         </form>
                     </li>
 
-                    <li style="margin-top:10px;margin-bottom:50px">
+                    <div style="margin-top:10px;margin-bottom:50px">
                         <button class="btn btn-warning span12">Get Directions</button>
-                    </li>
+                    </div>
+					</div>
+				<div class="row-fluid">
+                    <br/>
 
-                    <br>
-
-                    <li class="directions" style="font-size:30px;margin-bottom:10px;margin-left:-30px">Directions</li>
+                    <li style="font-size:30px;margin-bottom:10px;margin-left:-30px">Directions</li>
+					<li class="divider" style="margin-left:-34px;margin-right:-34px"></li>
+					
+					<div style="overflow:auto;height:400px;margin-right:-34px">
+					<li class="directions"></li>
+					</div>
 						<!--dyncamically inserted locations - start, end-->
-                    <li class="divider" style="margin-left:-34px;margin-right:-34px"></li>
-                    <li style="overflow:auto;height:400px;margin-right:-34px">
-                        <ol class="directions">
+					<!--Change in directions.js-->
 							<!--dynamically inserted directions-->
-                        </ol>
-                    </li>
-
-                </ul>
+				</div>
+                </div>
             </div>
             <!--/.well -->
         </div>
