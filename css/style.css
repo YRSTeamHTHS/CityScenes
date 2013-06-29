@@ -69,15 +69,19 @@ body {
 }
 
 #side-menu {
-     position: fixed;
-     bottom: -20px;
-     top: 50px;
-     -webkit-transition: all 0.5s ease;
- }
+    position: fixed;
+    bottom: -20px;
+    top: 50px;
+    -webkit-transition: all 0.5s ease;
+}
 
 #btn-side-menu-toggle {
     position: absolute;
     height: 50px;
     width: 35px;
     right: -35px;
+}
+
+#map-canvas {
+    height: 100%
 }
