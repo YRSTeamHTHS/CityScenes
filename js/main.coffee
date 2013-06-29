@@ -46,7 +46,17 @@ class pin
       new google.maps.Point(0, 0),
       new google.maps.Point(12, 35));
 
+loadWeather = () ->
+  feed = new google.feeds.Feed "http://weather.yahooapis.com/forecastrss?w=12761716&u=f"
+  feed.load (result) ->
+    if !result.error
+      console.log result.feed.entries
+
 initialize = () ->
+  google.load "feeds", "1"
+
+  loadWeather()
+
   mapOptions =
     center: new google.maps.LatLng(40.714346,-74.005966)
     zoom: 12
@@ -58,3 +68,4 @@ initialize = () ->
 
 $(document).ready () =>
   initialize()
+  loadWeather()
