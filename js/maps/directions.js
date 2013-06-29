@@ -1,7 +1,7 @@
 var dir;
 $(document).ready(function() {
 $.getJSON('http://maps.googleapis.com/maps/api/directions/json?origin=Chicago,IL&destination=Los+Angeles,CA&waypoints=Joplin,MO|Oklahoma+City,OK&sensor=false&mode=bicycling',function(data) {
-	console.log(data.routes[0].legs[0].distance);
+	//console.log(data.routes[0].legs[0].distance);
 	console.log(data);
 	var leg_distance = [];
 	var leg_duration = [];
@@ -12,11 +12,12 @@ $.getJSON('http://maps.googleapis.com/maps/api/directions/json?origin=Chicago,IL
 		leg_duration[i] = legs.duration.text;
 		leg_start[i] = legs.start_address;
 		leg_end[i] = legs.end_address;
-		//var wrap = '<span class="distance"></span><span class="duration"></span><span class="start"></span></li>'
+		var leg_wrap = legs.start_address;
+		//<span class="distance"></span><span class="duration"></span><span class="start"></span></li>'
 		//var step_instr[i] = [];
-		//$(wrap).appendTo('body');
-		//$('span.distance').html(legs.distance.text);
-		//$('span.duration').html(legs.duration.text);
+		console.log(legs.start_address);
+		console.log(legs.end_address);
+		$(leg_wrap).appendTo('li.directions');
 		
 		$.each(legs.steps, function (j, steps){
 			//step_distance[i][j] = steps.distance.text;
