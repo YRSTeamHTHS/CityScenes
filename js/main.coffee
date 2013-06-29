@@ -46,15 +46,16 @@ class pin
       new google.maps.Point(12, 35));
 
 loadWeather = () ->
-  feed = new google.feeds.Feed "http://weather.yahooapis.com/forecastrss?w=12761716&u=f"
-  feed.load (result) ->
-    if !result.error
-      console.log result.feed.entries
+  feedUrl = "http://weather.yahooapis.com/forecastrss?w=12761716&u=f"
+  jsonUrl = "https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&q=" + encodeURIComponent(feedUrl) + "&callback=?"
+  $.getJSON jsonUrl, (data) ->
+    weatherString = data.responseData.feed.entries[0].contentSnippet
+    re = /Current Conditions:\n(.*?)\n/
+    match = weatherString.match re
+    $("#weather").text match[1]
 
 initialize = () ->
-  # Load weather
-  #google.load "feeds", "1"
-  #google.setOnLoadCallback loadWeather
+  loadWeather()
 
   mapOptions =
     center: new google.maps.LatLng(40.714346,-74.005966)

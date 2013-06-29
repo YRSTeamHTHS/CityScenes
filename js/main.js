@@ -72,17 +72,21 @@
   })();
 
   loadWeather = function() {
-    var feed;
-    feed = new google.feeds.Feed("http://weather.yahooapis.com/forecastrss?w=12761716&u=f");
-    return feed.load(function(result) {
-      if (!result.error) {
-        return console.log(result.feed.entries);
-      }
+    var feedUrl, jsonUrl;
+    feedUrl = "http://weather.yahooapis.com/forecastrss?w=12761716&u=f";
+    jsonUrl = "https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&q=" + encodeURIComponent(feedUrl) + "&callback=?";
+    return $.getJSON(jsonUrl, function(data) {
+      var match, re, weatherString;
+      weatherString = data.responseData.feed.entries[0].contentSnippet;
+      re = /Current Conditions:\n(.*?)\n/;
+      match = weatherString.match(re);
+      return $("#weather").text(match[1]);
     });
   };
 
   initialize = function() {
     var map, mapOptions;
+    loadWeather();
     mapOptions = {
       center: new google.maps.LatLng(40.714346, -74.005966),
       zoom: 12,
