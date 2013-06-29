@@ -3,9 +3,10 @@ plotFilms = (map) ->
     $.csv.toObjects data, {}, (err, data) ->
       for item in data
         marker = new google.maps.Marker {
-          position: new google.maps.LatLng(item.LATITUDE,item.LONGITUDE),
-          map: map,
+          position: new google.maps.LatLng(item.LATITUDE,item.LONGITUDE)
+          map: map
           title: item.Film
+          icon: pins.film
         }
 
 plotBikes = (map) ->
@@ -29,6 +30,9 @@ plotBikes = (map) ->
 pinColors =
   bikeAvailable: '00FF00'
   bikeNotAvailable: '0000FF'
+
+pins =
+  film: "img/noun_project_16712.png"
 
 class pin
   constructor: (@color = "FE7569") ->
@@ -54,9 +58,7 @@ loadWeather = () ->
     match = weatherString.match re
     $("#weather").text match[1]
 
-initialize = () ->
-  loadWeather()
-
+loadMap = () ->
   mapOptions =
     center: new google.maps.LatLng(40.714346,-74.005966)
     zoom: 12
@@ -64,6 +66,10 @@ initialize = () ->
   google.maps.visualRefresh = true
   map = new google.maps.Map document.getElementById("map-canvas"), mapOptions
 
+initialize = () ->
+  loadWeather()
+
+  map = loadMap()
   plotFilms map
   plotBikes map
 
