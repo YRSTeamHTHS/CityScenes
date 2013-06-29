@@ -25,10 +25,10 @@
 
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz8Msa0Cela-0hHkSB5pAFgcfU6NL_ud0&sensor=false"></script>
     <script type="text/javascript" src="js/jquery-1.10.1.js"></script>
-    <script type="text/javascript" src="js/onReady.js"></script>
+    <script type="text/javascript" src="js/jquery.csv-0.71.js"></script>
+    <script type="text/javascript" src="js/onReady.js"></script>-
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="js/maps/directions.js"></script>
-    <script type="text/javascript" src="js/jquery.csv-0.71.js"></script>
     <script type="text/javascript" src="js/main.js"> </script>
 </head>
 
@@ -52,7 +52,7 @@
                             <button class="btn">Go</button>
                         </form>
                     </li>
-                    <li><a href="causes.html">83 F, &nbsp;&nbsp; Sunny</a></li>
+                    <li><a id="weather"></a></li>
                     <li><a href="extras.html">Help</a></li>
                 </ul>
             </div>
@@ -67,27 +67,26 @@
         <div class="span3">
             <div id="side-menu" class="well sidebar-nav span3 visible-menu">
 			<div class="container-fluid">
-				<div class="row-fluid">
-                    <button id="btn-side-menu-toggle" class="btn"> &lsaquo;&lsaquo; </button>
-
-                    <li>
+                    <!--<button id="btn-side-menu-toggle" class="btn"> &lsaquo;&lsaquo; </button>-->
+                    <div>
                         <form class="navbar-form">
-                            <input class="span12" type="text" placeholder="Start">
+                            <input name="start" class="span12" type="text" placeholder="Start">
+							<input name="end" class="span12" type="text" placeholder="End">
+							<input name="stops" class="span12" type="range"  min="0" max="15" onchange="updateRangeInput(this.value);">
+							<div>
+							<span id="rangeTextVal" class="span1">8</span><span>Destinations</span>
+							</div>
+							<label class="checkbox">
+							<input type="checkbox" value="">
+							Film Locations
+							</label>
+							<label class="checkbox">
+							<input type="checkbox" value="">
+							Monuments
+							</label>
+							<button class="btn btn-warning span12">Get Directions</button>
                         </form>
-                    </li>
-
-                    <li>
-                        <form class="navbar-form">
-                            <input class="span12" type="text" placeholder="End">
-                        </form>
-                    </li>
-
-                    <div style="margin-top:10px;margin-bottom:50px">
-                        <button class="btn btn-warning span12">Get Directions</button>
                     </div>
-					</div>
-				<div class="row-fluid">
-                    <br/>
 
                     <li style="font-size:30px;margin-bottom:10px;margin-left:-30px">Directions</li>
 					<li class="divider" style="margin-left:-34px;margin-right:-34px"></li>
@@ -100,6 +99,7 @@
 							<!--dynamically inserted directions-->
 				</div>
                 </div>
+                </div>
             </div>
             <!--/.well -->
         </div>
@@ -107,11 +107,16 @@
 
 
         <div class="span9">
-
-            <div style="margin-bottom:30px">
-                <div id="map-canvas"/>
-            </div>
-
+			<div class="container-fluid">
+			<div class="row-fluid">
+				<div style="margin-bottom:30px">
+					<div id="map-canvas" style="height: 500px;"></div>
+				</div>
+			</div>
+			<div class="row-fluid">
+			PICTURES
+			</div>
+			</div>
         </div>
         <!--/row-->
 
@@ -122,7 +127,6 @@
     <!-- Le javascript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/jquery.js"></script>
     <script src="js/bootstrap-transition.js"></script>
     <script src="js/bootstrap-alert.js"></script>
     <script src="js/bootstrap-modal.js"></script>
