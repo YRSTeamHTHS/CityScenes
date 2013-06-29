@@ -7,39 +7,10 @@
         body { height: 100%; margin: 0; padding: 0 }
         #map-canvas { height: 100% }
     </style>
-    <script type="text/javascript"
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz8Msa0Cela-0hHkSB5pAFgcfU6NL_ud0&sensor=false">
-    </script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz8Msa0Cela-0hHkSB5pAFgcfU6NL_ud0&sensor=false"></script>
     <script type="text/javascript" src="js/jquery-1.10.1.js"></script>
     <script type="text/javascript" src="js/jquery.csv-0.71.js"></script>
-    <script type="text/javascript">
-        function plotFilms(map) {
-            $.get('filmdata.csv', function (data) {
-                //console.log(data)
-                $.csv.toObjects(data, {}, function (err, data) {
-                    for (var i=0; i<data.length; i++) {
-                        var item = data[i];
-                        var marker = new google.maps.Marker({
-                            position: new google.maps.LatLng(item.LATITUDE,item.LONGITUDE),
-                            map: map,
-                            title: item.Film
-                        });
-                    }
-                })
-            });
-        }
-        function initialize() {
-            var mapOptions = {
-                center: new google.maps.LatLng(40.714346,-74.005966),
-                zoom: 12,
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            };
-            google.maps.visualRefresh = true;
-            var map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
-            plotFilms(map);
-        }
-        google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
+    <script type="text/javascript" src="js/main.js"> </script>
 </head>
 <body>
 <div id="map-canvas"/>
