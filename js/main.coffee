@@ -1,6 +1,5 @@
 plotFilms = (map) ->
   $.get 'filmdata.csv', (data) ->
-    console.log(data)
     $.csv.toObjects data, {}, (err, data) ->
       for item in data
         marker = new google.maps.Marker {
@@ -14,7 +13,7 @@ plotBikes = (map) ->
   pinNotAvailable = new pin pinColors.bikeNotAvailable
   $.getJSON 'bikedata.php', (data) ->
     for station in data.stationBeanList
-      console.log station
+      #console.log station
       if station.availableBikes > 0 and station.statusValue == "In Service"
         thisPin = pinAvailable
       else
@@ -53,9 +52,9 @@ loadWeather = () ->
       console.log result.feed.entries
 
 initialize = () ->
-  google.load "feeds", "1"
-
-  loadWeather()
+  # Load weather
+  #google.load "feeds", "1"
+  #google.setOnLoadCallback loadWeather
 
   mapOptions =
     center: new google.maps.LatLng(40.714346,-74.005966)
@@ -63,9 +62,9 @@ initialize = () ->
     mapTypeId: google.maps.MapTypeId.ROADMAP
   google.maps.visualRefresh = true
   map = new google.maps.Map document.getElementById("map-canvas"), mapOptions
+
   plotFilms map
   plotBikes map
 
 $(document).ready () =>
   initialize()
-  loadWeather()

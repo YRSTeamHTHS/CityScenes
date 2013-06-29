@@ -5,7 +5,6 @@
 
   plotFilms = function(map) {
     return $.get('filmdata.csv', function(data) {
-      console.log(data);
       return $.csv.toObjects(data, {}, function(err, data) {
         var item, marker, _i, _len, _results;
         _results = [];
@@ -32,7 +31,6 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         station = _ref[_i];
-        console.log(station);
         if (station.availableBikes > 0 && station.statusValue === "In Service") {
           thisPin = pinAvailable;
         } else {
@@ -85,8 +83,6 @@
 
   initialize = function() {
     var map, mapOptions;
-    google.load("feeds", "1");
-    loadWeather();
     mapOptions = {
       center: new google.maps.LatLng(40.714346, -74.005966),
       zoom: 12,
@@ -99,7 +95,7 @@
   };
 
   $(document).ready(function() {
-    return loadWeather();
+    return initialize();
   });
 
 }).call(this);
