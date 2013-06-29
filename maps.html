@@ -4,12 +4,10 @@
     <meta charset="utf-8">
     <title>CityBike</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <!-- Le styles -->
+
     <link href="css/bootstrap.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet"/>
     <link href="css/bootstrap-responsive.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet"/>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
@@ -23,13 +21,14 @@
     <link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png">
     <link rel="shortcut icon" href="ico/favicon.png">
 
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz8Msa0Cela-0hHkSB5pAFgcfU6NL_ud0&sensor=false"></script>
+    <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAz8Msa0Cela-0hHkSB5pAFgcfU6NL_ud0&sensor=false"></script>
     <script type="text/javascript" src="js/jquery-1.10.1.js"></script>
     <script type="text/javascript" src="js/jquery.csv-0.71.js"></script>
-    <script type="text/javascript" src="js/onReady.js"></script>-
+    <script type="text/javascript" src="js/onReady.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
     <script type="text/javascript" src="js/maps/directions.js"></script>
-    <script type="text/javascript" src="js/main.js"> </script>
+    <script type="text/javascript" src="js/main.js"></script>
 </head>
 
 <body>
@@ -41,104 +40,94 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="brand" href="#"><embed src="city.png" height="20px" width="20px"/></a>
+            <a class="brand" href="#">
+                <embed src="city.png" height="20px" width="20px"/>
+            </a>
 
             <div class="nav-collapse collapse">
                 <ul class="nav">
                     <li>
                         <form class="navbar-form">
-                            <input class="span6" type="text" placeholder="Search MAAPZ">
-                            <button class="btn">Go</button>
+                            <input type="text" placeholder="Search">
+                            <button class="btn">Search</button>
                         </form>
                     </li>
-                    <li> <img src="cloud.png" height="40px" width="40px"/> </li>
+                    <li><img src="cloud.png" height="40px" width="40px"/></li>
                     <li><a id="weather"></a></li>
                     <li><a href="extras.html">Help</a></li>
                 </ul>
             </div>
-            <!--/.nav-collapse -->
         </div>
     </div>
 </div>
 
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span3" id="sidebar">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <form class="navbar-form">
+                        <input name="start" class="span12" type="text" placeholder="Start">
+                        <input name="end" class="span12" type="text" placeholder="End">
+                        <input name="stops" class="span12" type="range" min="0" max="15"
+                               onchange="updateRangeInput(this.value);">
 
+                        <div>
+                            <span id="rangeTextVal" class="span1">8</span><span>Destinations</span>
+                        </div>
 
-        <div class="span3">
+                        <label class="checkbox">
+                            <input type="checkbox" value="">
+                            Film Locations
+                        </label>
 
-			<div class="container-fluid">
-			    
-                    <!--<button id="btn-side-menu-toggle" class="btn"> &lsaquo;&lsaquo; </button>-->
-                    <div class="row-fluid">
-                        <form class="navbar-form">
-                            <input name="start" class="span12" type="text" placeholder="Start">
-							<input name="end" class="span12" type="text" placeholder="End">
-							<input name="stops" class="span12" type="range"  min="0" max="15" onchange="updateRangeInput(this.value);">
-							<div>
-							<span id="rangeTextVal" class="span1">8</span><span>Destinations</span>
-							</div>
-							<label class="checkbox">
-							<input type="checkbox" value="">
-							Film Locations
-							</label>
-							<label class="checkbox">
-							<input type="checkbox" value="">
-							Monuments
-							</label>
-							<button class="btn btn-warning span12">Get Directions</button>
-                        </form>
+                        <label class="checkbox">
+                            <input type="checkbox" value="">
+                            Monuments
+                        </label>
+
+                        <button class="btn btn-warning span12">Get Directions</button>
+                    </form>
+                </div>
+                <div class="row-fluid">
+                    <h2>Directions</h2>
+                    <hr>
+                    <div>
+                        <div class="directions">
+                            <!--dyncamically inserted locations - start, end-->
+                            <!--Change in directions.js-->
+                            <!--dynamically inserted directions-->
+                        </div>
                     </div>
-					<div class="row-fluid">
-					<br />
-                    <div style="font-size:30px;margin-bottom:10px;margin-left:-30px">Directions</div>
-					<!--<li class="divider" style="margin-left:-34px;margin-right:-34px"></li>-->
-					
-					<div style="overflow:auto;height:400px;margin-right:-34px">
-					<div class="directions"></div>
-					</div>
-						<!--dyncamically inserted locations - start, end-->
-					<!--Change in directions.js-->
-							<!--dynamically inserted directions-->
-					</div>
-				
-                </div>
-                </div>
-            <!--/.well -->
-        <!--/span-->
 
+
+                </div>
+            </div>
+        </div>
 
         <div class="span9">
-			<div class="container-fluid">
-			<div class="row-fluid">
-				<div style="margin-bottom:30px">
-					<div id="map-canvas" style="height: 500px;"></div>
-				</div>
-			</div>
-			<div class="row-fluid">
-			PICTURES
-			</div>
-			</div>
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div id="map-canvas" style="height: 500px;"></div>
+                </div>
+                <div class="row-fluid"></div>
+            </div>
         </div>
-        <!--/row-->
-
-
     </div>
-    <!--/.fluid-container-->
+</div>
 
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="js/bootstrap-transition.js"></script>
-    <script src="js/bootstrap-alert.js"></script>
-    <script src="js/bootstrap-modal.js"></script>
-    <script src="js/bootstrap-dropdown.js"></script>
-    <script src="js/bootstrap-scrollspy.js"></script>
-    <script src="js/bootstrap-tab.js"></script>
-    <script src="js/bootstrap-tooltip.js"></script>
-    <script src="js/bootstrap-popover.js"></script>
-    <script src="js/bootstrap-button.js"></script>
-    <script src="js/bootstrap-collapse.js"></script>
-    <script src="js/bootstrap-carousel.js"></script>
-    <script src="js/bootstrap-typeahead.js"></script>
+<script src="js/bootstrap-transition.js"></script>
+<script src="js/bootstrap-alert.js"></script>
+<script src="js/bootstrap-modal.js"></script>
+<script src="js/bootstrap-dropdown.js"></script>
+<script src="js/bootstrap-scrollspy.js"></script>
+<script src="js/bootstrap-tab.js"></script>
+<script src="js/bootstrap-tooltip.js"></script>
+<script src="js/bootstrap-popover.js"></script>
+<script src="js/bootstrap-button.js"></script>
+<script src="js/bootstrap-collapse.js"></script>
+<script src="js/bootstrap-carousel.js"></script>
+<script src="js/bootstrap-typeahead.js"></script>
 
 </body>
 </html>

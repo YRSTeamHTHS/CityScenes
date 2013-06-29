@@ -1,5 +1,5 @@
 plotFilms = (map) ->
-  $.get 'filmdata.csv', (data) ->
+  $.get 'locations/filmdata.csv', (data) ->
     $.csv.toObjects data, {}, (err, data) ->
       for item in data
         marker = new google.maps.Marker {

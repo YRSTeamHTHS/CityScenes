@@ -4,7 +4,7 @@
     _this = this;
 
   plotFilms = function(map) {
-    return $.get('filmdata.csv', function(data) {
+    return $.get('locations/filmdata.csv', function(data) {
       return $.csv.toObjects(data, {}, function(err, data) {
         var item, marker, _i, _len, _results;
         _results = [];
