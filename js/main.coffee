@@ -141,7 +141,6 @@ class Navigator
         startStation = nearestStation(startLoc)
         endStation = nearestStation(endLoc)
 
-    $.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling', (data) ->
         # Find direct biking route
         options =
           origin: startStation.location
@@ -205,6 +204,7 @@ initialize = () ->
     fetcher.show map
     nav = new Navigator map, fetcher.stations, fetcher.destinations
     ui = new Interface map, fetcher, nav
+    nav.print()
 
 $(document).ready () =>
   initialize()

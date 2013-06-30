@@ -231,25 +231,22 @@
     };
 
     Navigator.prototype.calculate = function(start, end, destinationCount, callback) {
-      this.geocode(start, function(location) {
+      return this.geocode(start, function(location) {
         var startLoc;
         startLoc = location;
         return this.geocode(end, function(location) {
-          var endLoc, endStation, startStation;
+          var endLoc, endStation, options, startStation;
           endLoc = location;
           startStation = nearestStation(startLoc);
-          return endStation = nearestStation(endLoc);
-        });
-      });
-      return $.getJSON('http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling', function(data) {
-        var options;
-        options = {
-          origin: startStation.location,
-          destination: endStation.location,
-          travelMode: google.maps.TravelMode.BIKING
-        };
-        return this._directions(options, function(result) {
-          return console.log(result);
+          endStation = nearestStation(endLoc);
+          options = {
+            origin: startStation.location,
+            destination: endStation.location,
+            travelMode: google.maps.TravelMode.BIKING
+          };
+          return this._directions(options, function(result) {
+            return console.log(result);
+          });
         });
       });
     };
@@ -325,7 +322,8 @@
       var nav, ui;
       fetcher.show(map);
       nav = new Navigator(map, fetcher.stations, fetcher.destinations);
-      return ui = new Interface(map, fetcher, nav);
+      ui = new Interface(map, fetcher, nav);
+      return nav.print();
     });
   };
 
