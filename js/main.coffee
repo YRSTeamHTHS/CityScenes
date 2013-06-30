@@ -200,6 +200,9 @@ class Navigator
         startStation = @nearestStation(startLoc)
         endStation = @nearestStation(endLoc)
 
+        # Find walking directions to/from biking stations
+
+
         # Find direct biking route
         options =
           origin: startStation.location
@@ -331,6 +334,7 @@ class Display
     @fetcher.fetch (err, result) =>
       @fetcher.show @map
       @destinationTypes = result.destinationTypes
+      console.log "destinationTypes", @destinationTypes
       @nav = new Navigator @map, result.stations, result.destinations, result.destinationTypes
       @_initControls()
       @loading_modal.modal("hide")
