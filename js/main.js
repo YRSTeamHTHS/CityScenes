@@ -305,7 +305,7 @@
     };
 
     Navigator.prototype._print = function(result) {
-      var arrival, arrival_string, departure, departure_string, end_wrap, i, item, leg, leg_end, leg_wrap, start_wrap, step, step_wrap, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3, _results;
+      var arrival, arrival_string, departure, departure_string, end_wrap, i, instr_text, item, leg, leg_end, leg_wrap, start_wrap, step, step_wrap, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3, _results;
       console.log(result);
       leg_end = [];
       departure_string = result.routes[0].legs[0].start_address;
@@ -329,14 +329,21 @@
         _ref2 = leg.steps;
         for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
           step = _ref2[_k];
-          step_wrap = "<li>" + step.instructions + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
+          instr_text = step.html_instructions.replace('<div>', '<br/><span>');
+          instr_text = step.html_instructions.replace('</div>', '</span>');
+          console.log(instr_text);
+          step_wrap = "<li>" + instr_text + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
           $(step_wrap).appendTo('ol.directions');
         }
-        leg_wrap = '<div class="dist-time-lg">' + leg.distance.text + " - about " + leg.duration.text + "</div><br/>";
+        leg_wrap = '<div class="dist-time-lg">' + leg.distance.text + " - about " + leg.duration.text + "</div><hr><br/>";
         $(leg_wrap).appendTo('div.directions');
         arrival_string = leg.end_address;
         arrival = arrival_string.split(",");
-        end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>';
+        if (i !== result.routes[0].legs.length - 1) {
+          end_wrap = '</ol><div class="waypoint"><b>' + arrival[i] + '</b><br/>';
+        } else {
+          end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>';
+        }
         _ref3 = arrival.slice(1);
         for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
           item = _ref3[_l];
