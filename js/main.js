@@ -39,8 +39,10 @@
       var thisPin;
       if (station.availableBikes > 0 && station.statusValue === "In Service") {
         thisPin = new colorPin(pinColors.bikeAvailable);
+        this.available = true;
       } else {
         thisPin = new colorPin(pinColors.bikeNotAvailable);
+        this.available = false;
       }
       Station.__super__.constructor.call(this, station.latitude, station.longitude, station.stationName, "", thisPin.pinImage(), thisPin.pinShadow());
     }
@@ -235,10 +237,12 @@
       _ref = this.stations;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         station = _ref[_i];
-        distance = this._distance(station.location, location);
-        if (distance < minDistance) {
-          nearest = station;
-          minDistance = distance;
+        if (station.available) {
+          distance = this._distance(station.location, location);
+          if (distance < minDistance) {
+            nearest = station;
+            minDistance = distance;
+          }
         }
       }
       return nearest;

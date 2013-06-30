@@ -15,8 +15,10 @@ class Station extends Waypoint
   constructor: (station) ->
     if station.availableBikes > 0 and station.statusValue == "In Service"
       thisPin = new colorPin pinColors.bikeAvailable
+      @available = true
     else
       thisPin = new colorPin pinColors.bikeNotAvailable
+      @available = false
     super station.latitude, station.longitude, station.stationName, "", thisPin.pinImage(), thisPin.pinShadow()
 
 class MapData
@@ -136,10 +138,11 @@ class Navigator
     minDistance = Infinity
     nearest = null
     for station in @stations
-      distance = @_distance(station.location, location)
-      if distance < minDistance
-        nearest = station
-        minDistance = distance
+      if station.available
+        distance = @_distance(station.location, location)
+        if distance < minDistance
+          nearest = station
+          minDistance = distance
     return nearest
 
   _nearestDestinations: (path, count) ->
