@@ -21,16 +21,16 @@ class Station extends Waypoint
       @available = false
     super station.latitude, station.longitude, station.stationName, "", thisMarker
 
-class MapData
+class DataFetcher
   @stations = []
   @destinations = []
 
   fetch: (callback) ->
-    @_fetchStations (data) =>
+    @_fetchStations (err, data) =>
       @stations = data
-      @_fetchDestinations (data) =>
+      @_fetchDestinations (err, data) =>
         @destinations = data
-        callback()
+        callback null, {stations: @stations, destinations: @destinations}
 
   show: (map) ->
     p.show map for p in @stations
@@ -44,7 +44,7 @@ class MapData
         stationPoint = new Station stationData
         stationPoints.push stationPoint
 
-      callback(stationPoints)
+      callback null, stationPoints
 
   _fetchDestinations: (callback) ->
     $.get 'locations/filmdata.csv', (data) ->
@@ -54,11 +54,7 @@ class MapData
           itemWaypoint = new Waypoint item.latitude, item.longitude, item.title, item.description, markers.goldStar
           waypoints.push itemWaypoint
 
-        callback(waypoints)
-
-pinColors =
-  bikeAvailable: '00FF00'
-  bikeNotAvailable: '0000FF'
+        callback null, waypoints
 
 markers =
   film: "img/noun_project_16712.png"
@@ -80,21 +76,6 @@ markers =
     strokeWeight: 3
   }
 
-class colorPin
-  constructor: (@color = "FE7569") ->
-
-  pinImage: ->
-    new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + @color,
-      new google.maps.Size(21, 34),
-      new google.maps.Point(0,0),
-      new google.maps.Point(10, 34));
-
-  pinShadow: ->
-    new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
-      new google.maps.Size(40, 37),
-      new google.maps.Point(0, 0),
-      new google.maps.Point(12, 35));
-
 loadWeather = () ->
   feedUrl = "http://weather.yahooapis.com/forecastrss?w=12761716&u=f"
   jsonUrl = "https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&q=" + encodeURIComponent(feedUrl) + "&callback=?"
@@ -103,17 +84,6 @@ loadWeather = () ->
     re = /Current Conditions:\n(.*?)\n/
     match = weatherString.match re
     $("#weather").text match[1]
-
-loadMap = () ->
-  mapOptions =
-    center: new google.maps.LatLng(40.714346,-74.005966)
-    zoom: 12
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  google.maps.visualRefresh = true
-  map = new google.maps.Map document.getElementById("map_canvas"), mapOptions
-  bikeLayer = new google.maps.BicyclingLayer()
-  bikeLayer.setMap(map)
-  return map
 
 class Navigator
   constructor: (@map, @stations, @destinations) ->
@@ -125,7 +95,7 @@ class Navigator
   _directions: (options, callback) ->
     @directionsService.route options, (result, status) ->
       if status == google.maps.DirectionsStatus.OK
-        callback result
+        callback null, result
 
   _distance: (LatLng1, LatLng2) ->
     return Math.pow(LatLng1.lat() - LatLng2.lat(), 2) + Math.pow(LatLng1.lng() - LatLng2.lng(), 2)
@@ -149,7 +119,7 @@ class Navigator
   geocode: (address, callback) ->
     @geocoder.geocode {address: address}, (results, status) ->
       if status == google.maps.GeocoderStatus.OK
-        callback(results[0].geometry.location)
+        callback null, results[0].geometry.location
 
   nearestStation: (location) ->
     minDistance = Infinity
@@ -172,15 +142,16 @@ class Navigator
       list = @_sort_array_by_distance(list)[0..count]
       all = all.concat list
     all = @_sort_array_by_distance(all)[0..count]
-    DirectionsWaypoints = ({location: i[1].location} for i in all)
-    console.log DirectionsWaypoints
-    return DirectionsWaypoints
+    return (i[1] for i in all)
+
+  _destinationsToDirectionsWaypoints: (destinations) ->
+    return ({location: i.location} for i in destinations)
 
   calculate: (start, end, destinationCount, callback) ->
     # Geocode start and end points
-    @geocode start, (location) =>
+    @geocode start, (err, location) =>
       startLoc = location
-      @geocode end, (location) =>
+      @geocode end, (err, location) =>
         endLoc = location
 
         # Find nearest available bike stations to start and end points
@@ -192,9 +163,12 @@ class Navigator
           origin: startStation.location
           destination: endStation.location
           travelMode: google.maps.TravelMode.BICYCLING
-        @_directions options, (result) =>
+        @_directions options, (err, result) =>
           # Search for waypoints along route
-          DirectionsWaypoints = @_nearestDestinations(result.routes[0].overview_path, destinationCount)
+          destinations = @_nearestDestinations(result.routes[0].overview_path, destinationCount)
+          console.log "Destinations", destinations
+          DirectionsWaypoints = @_destinationsToDirectionsWaypoints(destinations)
+          console.log "DirectionsWaypoints", DirectionsWaypoints
 
           # Navigate through the waypoints
           options =
@@ -203,14 +177,15 @@ class Navigator
             travelMode: google.maps.TravelMode.BICYCLING
             optimizeWaypoints: true
             waypoints: DirectionsWaypoints
-          @_directions options, (result) =>
-            @_print result
-            callback result
+          @_directions options, (err, result) =>
+            @_print result, startStation, destinations, endStation
+            callback null, result
 
-  _print: (result) ->
+  _print: (result, startStation, destinations, endStation) ->
     #$.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
     #http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling
-    console.log result
+
+    console.log "Final Route", result
 
     # Show route on map
     @directionsDisplay.setDirections result
@@ -219,7 +194,8 @@ class Navigator
     $(".directions").html("")
 
     leg_end = []
-    
+    waypoint_order = result.routes[0].waypoint_order
+
     #print total travel time
     total_time = 0
     for leg in result.routes[0].legs
@@ -236,7 +212,7 @@ class Navigator
     #start address
     departure_string = result.routes[0].legs[0].start_address #get complete departure address
     departure = departure_string.split ","; #split address at commas into array
-    start_wrap = '<div class="departure"><b>' + departure[0] + '</b><br/>' #name of place is bolded
+    start_wrap = '<div class="departure"><b>' + startStation.title + '</b><br/>' + departure[0] + '<br/>' #name of place is bolded
     for item in departure[1..] #rest of address
       start_wrap += item + ',' #add ,'s back to address
     start_wrap = start_wrap.substring 0,start_wrap.lastIndexOf(',') #remove the trailing comma
@@ -264,34 +240,49 @@ class Navigator
       arrival_string = leg.end_address #get complete address
       arrival = arrival_string.split ","; #split address at commas
       if i != result.routes[0].legs.length-1 #if a waypoint
-        end_wrap = '</ol><div class="waypoint"><b>' + arrival[0] + '</b><br/>' #name of place is bolded
+        end_wrap = '</ol><div class="waypoint"><b>' + destinations[waypoint_order[i]].title + '</b><br/>' + arrival[0] + '<br/>' #name of place is bolded
       else
-        end_wrap = '</ol><div class="arrival"><b>' + arrival[0] + '</b><br/>' #name of place is bolded
+        end_wrap = '</ol><div class="arrival"><b>' + endStation.title + '</b><br/>' + arrival[0] + '<br/>' #name of place is bolded
       for item in arrival[1..] #rest of address
         end_wrap += item + ',' #add commas back into address
       end_wrap = end_wrap.substring 0,end_wrap.lastIndexOf(',') #remove the trailing comma
       end_wrap += '<br/><br/></div>' #close div
       $(end_wrap).appendTo 'div.directions' #write
         
-class Interface
-  constructor: (@map, @fetcher, @nav) ->
-    $("#directions_form").submit (e) ->
+class Display
+  _initControls: () ->
+    $("#directions_form").submit (e) =>
       e.preventDefault()
       start = $("#start").val()
       end = $("#end").val()
       stops = $("#stops").val()
-      nav.calculate start, end, stops, (data) ->
-        console.log data
+      @nav.calculate start, end, stops, (err, data) =>
+        #console.log data
       return false
 
+  load: () ->
+    loadWeather()
+    @map = @_loadMap()
+    @fetcher = new DataFetcher()
+    @fetcher.fetch (err, result) =>
+      @fetcher.show @map
+      @nav = new Navigator @map, result.stations, result.destinations
+      @_initControls()
+
+  _loadMap: () ->
+    mapOptions =
+      center: new google.maps.LatLng(40.714346,-74.005966)
+      zoom: 12
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    google.maps.visualRefresh = true
+    map = new google.maps.Map document.getElementById("map_canvas"), mapOptions
+    bikeLayer = new google.maps.BicyclingLayer()
+    bikeLayer.setMap(map)
+    return map
+
 initialize = () ->
-  loadWeather()
-  map = loadMap()
-  fetcher = new MapData()
-  fetcher.fetch () ->
-    fetcher.show map
-    nav = new Navigator map, fetcher.stations, fetcher.destinations
-    ui = new Interface map, fetcher, nav
+  disp = new Display()
+  disp.load()
 
 $(document).ready () =>
   initialize()
