@@ -70,16 +70,15 @@
                         <form id="directions_form">
                             <input name="start" id="start" class="span12" type="text" placeholder="Start">
                             <input name="end" id="end" class="span12" type="text" placeholder="End">
-                            <input name="stops" id="stops" class="span12" type="range" min="0" max="8" onchange="updateRangeInput(this.value);">
-
-                            <div class="pull-right">
-                                <span id="rangeTextVal" class="span1">4 Destinations</span>
-                            </div>
-
-							<br><br>
-
-                            <span><b>Types</b></span>
-							<label class="checkbox"><input type="checkbox" name="film" id="film">Film Locations</label>
+							<div id="parameters">
+                            <span><big>Parameters</big></span>
+								<input name="stops" id="stops" class="span12" type="range" min="0" max="8" onchange="updateRangeInput(this.value);">
+								<div class="pull-right">
+									<span id="rangeTextVal" class="span1">4 Destinations</span>
+								</div>
+								<br><br>
+								<label class="checkbox"><input type="checkbox" name="film" id="film">Film Locations</label>
+							</div>
 
                             <button class="btn btn-warning span12" style="margin-left:0" type="submit">Get Directions</button>
                         </form>

@@ -163,8 +163,15 @@ hr {
 
 #start {
 	background-color:rgb(205, 241, 205);
+	margin-top:10px;
+	margin-bottom:25px;
 }
 
 #end {
 	background-color:rgb(252, 218, 218);
+	margin-bottom:25px;
+}
+
+#parameters {
+	margin-bottom:25px;
 }
