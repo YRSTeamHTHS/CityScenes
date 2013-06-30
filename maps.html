@@ -73,11 +73,13 @@
                             <input name="stops" class="span12" type="range" min="0" max="8"
                                    onchange="updateRangeInput(this.value);">
 
-                            <div>
-                                <span id="rangeTextVal" class="span1">4</span><span>Destinations</span>
+                            <div class="pull-right">
+                                <span id="rangeTextVal" class="span1">4</span>
+								<span>&nbsp; Destinations</span>
                             </div>
-
-                            <label class="checkbox">
+							<br><br>
+                            <span><b>Types</b></span>
+							<label class="checkbox">
                                 <input type="checkbox" value="">
                                 Film Locations
                             </label>
@@ -90,9 +92,10 @@
                             <button class="btn btn-warning  span12" style="margin-left:0px">Get Directions</button>
                         </form>
                     </div>
+					
                     <div class="row-fluid">
                         <h2>Directions</h2>
-                        <hr>
+                        <hr style="margin-top:0px">
                         <div id="directions_wrapper">
 
                             <div class="directions">
