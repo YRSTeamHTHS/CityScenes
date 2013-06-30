@@ -233,7 +233,7 @@
     };
 
     Navigator.prototype._nearestDestinations = function(path, count) {
-      var DirectionsWaypoints, a, all, destination, i, list, point, _i, _j, _len, _len1, _ref;
+      var a, all, destination, i, list, point, _i, _j, _len, _len1, _ref;
       all = [];
       for (_i = 0, _len = path.length; _i < _len; _i++) {
         point = path[_i];
@@ -248,19 +248,30 @@
         all = all.concat(list);
       }
       all = this._sort_array_by_distance(all).slice(0, +count + 1 || 9e9);
-      DirectionsWaypoints = (function() {
+      return (function() {
         var _k, _len2, _results;
         _results = [];
         for (_k = 0, _len2 = all.length; _k < _len2; _k++) {
           i = all[_k];
+          _results.push(i[1]);
+        }
+        return _results;
+      })();
+    };
+
+    Navigator.prototype._destinationsToDirectionsWaypoints = function(destinations) {
+      var i;
+      return (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = destinations.length; _i < _len; _i++) {
+          i = destinations[_i];
           _results.push({
-            location: i[1].location
+            location: i.location
           });
         }
         return _results;
       })();
-      console.log(DirectionsWaypoints);
-      return DirectionsWaypoints;
     };
 
     Navigator.prototype.calculate = function(start, end, destinationCount, callback) {
@@ -278,9 +289,12 @@
             destination: endStation.location,
             travelMode: google.maps.TravelMode.BICYCLING
           };
-          return _this._directions(options, function(callback, result) {
-            var DirectionsWaypoints;
-            DirectionsWaypoints = _this._nearestDestinations(result.routes[0].overview_path, destinationCount);
+          return _this._directions(options, function(err, result) {
+            var DirectionsWaypoints, destinations;
+            destinations = _this._nearestDestinations(result.routes[0].overview_path, destinationCount);
+            console.log("Destinations", destinations);
+            DirectionsWaypoints = _this._destinationsToDirectionsWaypoints(destinations);
+            console.log("DirectionsWaypoints", DirectionsWaypoints);
             options = {
               origin: startStation.location,
               destination: endStation.location,
@@ -289,7 +303,7 @@
               waypoints: DirectionsWaypoints
             };
             return _this._directions(options, function(err, result) {
-              _this._print(result);
+              _this._print(result, startStation, destinations, endStation);
               return callback(null, result);
             });
           });
@@ -297,12 +311,13 @@
       });
     };
 
-    Navigator.prototype._print = function(result) {
-      var arrival, arrival_string, departure, departure_string, end_wrap, hours, i, instr_text, item, leg, leg_end, leg_wrap, minutes, start_wrap, step, step_wrap, time_wrap, total_time, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4, _results;
-      console.log(result);
+    Navigator.prototype._print = function(result, startStation, destinations, endStation) {
+      var arrival, arrival_string, departure, departure_string, end_wrap, hours, i, instr_text, item, leg, leg_end, leg_wrap, minutes, start_wrap, step, step_wrap, time_wrap, total_time, waypoint_order, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4, _results;
+      console.log("Final Route", result);
       this.directionsDisplay.setDirections(result);
       $(".directions").html("");
       leg_end = [];
+      waypoint_order = result.routes[0].waypoint_order;
       total_time = 0;
       _ref = result.routes[0].legs;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -320,7 +335,7 @@
       $(time_wrap).appendTo('div.directions');
       departure_string = result.routes[0].legs[0].start_address;
       departure = departure_string.split(",");
-      start_wrap = '<div class="departure"><b>' + departure[0] + '</b><br/>';
+      start_wrap = '<div class="departure"><b>' + startStation.title + '</b><br/>' + departure[0] + '<br/>';
       _ref1 = departure.slice(1);
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         item = _ref1[_j];
@@ -349,9 +364,9 @@
         arrival_string = leg.end_address;
         arrival = arrival_string.split(",");
         if (i !== result.routes[0].legs.length - 1) {
-          end_wrap = '</ol><div class="waypoint"><b>' + arrival[0] + '</b><br/>';
+          end_wrap = '</ol><div class="waypoint"><b>' + destinations[waypoint_order[i]].title + '</b><br/>' + arrival[0] + '<br/>';
         } else {
-          end_wrap = '</ol><div class="arrival"><b>' + arrival[0] + '</b><br/>';
+          end_wrap = '</ol><div class="arrival"><b>' + endStation.title + '</b><br/>' + arrival[0] + '<br/>';
         }
         _ref4 = arrival.slice(1);
         for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
@@ -381,9 +396,7 @@
         start = $("#start").val();
         end = $("#end").val();
         stops = $("#stops").val();
-        _this.nav.calculate(start, end, stops, function(err, data) {
-          return console.log(data);
-        });
+        _this.nav.calculate(start, end, stops, function(err, data) {});
         return false;
       });
     };

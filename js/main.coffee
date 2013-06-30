@@ -142,9 +142,10 @@ class Navigator
       list = @_sort_array_by_distance(list)[0..count]
       all = all.concat list
     all = @_sort_array_by_distance(all)[0..count]
-    DirectionsWaypoints = ({location: i[1].location} for i in all)
-    console.log DirectionsWaypoints
-    return DirectionsWaypoints
+    return (i[1] for i in all)
+
+  _destinationsToDirectionsWaypoints: (destinations) ->
+    return ({location: i.location} for i in destinations)
 
   calculate: (start, end, destinationCount, callback) ->
     # Geocode start and end points
@@ -162,9 +163,12 @@ class Navigator
           origin: startStation.location
           destination: endStation.location
           travelMode: google.maps.TravelMode.BICYCLING
-        @_directions options, (callback, result) =>
+        @_directions options, (err, result) =>
           # Search for waypoints along route
-          DirectionsWaypoints = @_nearestDestinations(result.routes[0].overview_path, destinationCount)
+          destinations = @_nearestDestinations(result.routes[0].overview_path, destinationCount)
+          console.log "Destinations", destinations
+          DirectionsWaypoints = @_destinationsToDirectionsWaypoints(destinations)
+          console.log "DirectionsWaypoints", DirectionsWaypoints
 
           # Navigate through the waypoints
           options =
@@ -174,13 +178,14 @@ class Navigator
             optimizeWaypoints: true
             waypoints: DirectionsWaypoints
           @_directions options, (err, result) =>
-            @_print result
+            @_print result, startStation, destinations, endStation
             callback null, result
 
-  _print: (result) ->
+  _print: (result, startStation, destinations, endStation) ->
     #$.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
     #http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling
-    console.log result
+
+    console.log "Final Route", result
 
     # Show route on map
     @directionsDisplay.setDirections result
@@ -189,7 +194,8 @@ class Navigator
     $(".directions").html("")
 
     leg_end = []
-    
+    waypoint_order = result.routes[0].waypoint_order
+
     #print total travel time
     total_time = 0
     for leg in result.routes[0].legs
@@ -206,7 +212,7 @@ class Navigator
     #start address
     departure_string = result.routes[0].legs[0].start_address #get complete departure address
     departure = departure_string.split ","; #split address at commas into array
-    start_wrap = '<div class="departure"><b>' + departure[0] + '</b><br/>' #name of place is bolded
+    start_wrap = '<div class="departure"><b>' + startStation.title + '</b><br/>' + departure[0] + '<br/>' #name of place is bolded
     for item in departure[1..] #rest of address
       start_wrap += item + ',' #add ,'s back to address
     start_wrap = start_wrap.substring 0,start_wrap.lastIndexOf(',') #remove the trailing comma
@@ -234,9 +240,9 @@ class Navigator
       arrival_string = leg.end_address #get complete address
       arrival = arrival_string.split ","; #split address at commas
       if i != result.routes[0].legs.length-1 #if a waypoint
-        end_wrap = '</ol><div class="waypoint"><b>' + arrival[0] + '</b><br/>' #name of place is bolded
+        end_wrap = '</ol><div class="waypoint"><b>' + destinations[waypoint_order[i]].title + '</b><br/>' + arrival[0] + '<br/>' #name of place is bolded
       else
-        end_wrap = '</ol><div class="arrival"><b>' + arrival[0] + '</b><br/>' #name of place is bolded
+        end_wrap = '</ol><div class="arrival"><b>' + endStation.title + '</b><br/>' + arrival[0] + '<br/>' #name of place is bolded
       for item in arrival[1..] #rest of address
         end_wrap += item + ',' #add commas back into address
       end_wrap = end_wrap.substring 0,end_wrap.lastIndexOf(',') #remove the trailing comma
@@ -251,7 +257,7 @@ class Display
       end = $("#end").val()
       stops = $("#stops").val()
       @nav.calculate start, end, stops, (err, data) =>
-        console.log data
+        #console.log data
       return false
 
   load: () ->
