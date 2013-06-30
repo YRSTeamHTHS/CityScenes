@@ -177,17 +177,21 @@ class Navigator
         
         #print each direction step
         for step in leg.steps
-          step_wrap = "<li>" + step.html_instructions + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
+          instr_text = step.html_instructions.replace('style=','class="nothing" style=')
+          step_wrap = "<li>" + instr_text + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
           $(step_wrap).appendTo 'ol.directions'
         
         #print leg time/distance
-        leg_wrap = '<div class="dist-time-lg">' + leg.distance.text + " - about " + leg.duration.text + "</div><br/>"
+        leg_wrap = '<div class="dist-time-lg">' + leg.distance.text + " - about " + leg.duration.text + "</div><hr><br/>"
         $(leg_wrap).appendTo 'div.directions'
         
         #end address
         arrival_string = leg.end_address #get complete address
         arrival = arrival_string.split ","; #split address at commas
-        end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>' #name of place is bolded
+        if i != data.routes[0].legs.length-1 #if a waypoint
+          end_wrap = '</ol><div class="waypoint"><b>' + arrival[i] + '</b><br/>' #name of place is bolded
+        else
+          end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>' #name of place is bolded
         for item in arrival[1..] #rest of address
           end_wrap += item + ',' #add commas back into address
         end_wrap = end_wrap.substring 0,end_wrap.lastIndexOf(',') #remove the trailing comma
