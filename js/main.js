@@ -176,6 +176,8 @@
       this.destinations = destinations;
       this.directionsService = new google.maps.DirectionsService();
       this.geocoder = new google.maps.Geocoder();
+      this.directionsDisplay = new google.maps.DirectionsRenderer();
+      this.directionsDisplay.setMap(map);
     }
 
     Navigator.prototype._directions = function(options, callback) {
@@ -307,6 +309,8 @@
     Navigator.prototype._print = function(result) {
       var arrival, arrival_string, departure, departure_string, end_wrap, i, instr_text, item, leg, leg_end, leg_wrap, start_wrap, step, step_wrap, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3, _results;
       console.log(result);
+      this.directionsDisplay.setDirections(result);
+      $(".directions").html("");
       leg_end = [];
       departure_string = result.routes[0].legs[0].start_address;
       departure = departure_string.split(",");

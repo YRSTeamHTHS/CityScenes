@@ -96,7 +96,9 @@ loadMap = () ->
 class Navigator
   constructor: (@map, @stations, @destinations) ->
     @directionsService = new google.maps.DirectionsService()
-    @geocoder = new google.maps.Geocoder();
+    @geocoder = new google.maps.Geocoder()
+    @directionsDisplay = new google.maps.DirectionsRenderer()
+    @directionsDisplay.setMap map
 
   _directions: (options, callback) ->
     @directionsService.route options, (result, status) ->
@@ -186,6 +188,13 @@ class Navigator
     #$.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
     #http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling
     console.log result
+
+    # Show route on map
+    @directionsDisplay.setDirections result
+
+    # Clear old directions
+    $(".directions").html("")
+
     leg_end = []
 
     #start address
