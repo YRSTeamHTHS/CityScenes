@@ -252,8 +252,9 @@
     };
 
     Navigator.prototype.print = function() {
-      return $.getJSON('http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling', function(data) {
+      return $.getJSON('http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', function(data) {
         var arrival, arrival_string, departure, departure_string, end_wrap, i, item, leg, leg_end, leg_wrap, start_wrap, step, step_wrap, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3, _results;
+        console.log(data);
         leg_end = [];
         departure_string = data.routes[0].legs[0].start_address;
         departure = departure_string.split(",");

@@ -155,7 +155,7 @@ class Navigator
     $.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
     #http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling
       console.log data
-	  leg_end = []
+      leg_end = []
       
       #start address
       departure_string = data.routes[0].legs[0].start_address #get complete departure address
