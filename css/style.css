@@ -96,10 +96,6 @@ body {
 	padding-left:40px;
 }
 
-.departure:first-line{
-	font-weight:bold;
-}
-
 .arrival {
 	font-size:18px;
 	color:black;
@@ -109,8 +105,13 @@ body {
 	padding-left:40px;
 }
 
-.arrival:first-line{
-	font-weight:bold;
+.waypoint {
+	font-size:18px;
+	color:black;
+	background:url(../waypoint.png);
+	background-size:40px 40px;
+	background-repeat:no-repeat;
+	padding-left:40px;
 }
 
 .dist-time{
