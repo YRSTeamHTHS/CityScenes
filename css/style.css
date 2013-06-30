@@ -128,8 +128,14 @@ body {
 
 .dist-time-total {
 	color:rgb(98, 98, 98);
-	font-size:24px;
-	text-align:right;
+	font-size:20px;
+	text-align:left;
+	background:url(../clock.png);
+	background-size: 30px 30px;
+	background-repeat:no-repeat;
+	padding-left:30px;
+	padding-top:5px;
+	padding-bottom:5px;
 }
 
 #directions_wrapper {
@@ -146,4 +152,26 @@ hr {
 	border-color:  rgb(168, 168, 168);
 	border: 0 none;
 	height:1px;
+}
+
+#help-button {
+	background:url(../question-mark.png);
+	background-size: 30px 30px;
+	background-repeat:no-repeat;
+	margin-top:8px;
+}
+
+#start {
+	background-color:rgb(205, 241, 205);
+	margin-top:10px;
+	margin-bottom:25px;
+}
+
+#end {
+	background-color:rgb(252, 218, 218);
+	margin-bottom:25px;
+}
+
+#parameters {
+	margin-bottom:25px;
 }
