@@ -103,27 +103,49 @@
     function Navigator() {}
 
     Navigator.prototype.navigate = function() {
-      return $.getJSON('http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling', function(data) {
-        var departure, leg, leg_end, leg_wrap, start_wrap, step, step_wrap, _i, _j, _len, _len1, _ref, _ref1;
+      return $.getJSON('http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', function(data) {
+        var arrival, arrival_string, departure, departure_string, end_wrap, i, item, leg, leg_end, leg_wrap, start_wrap, step, step_wrap, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3, _results;
+        console.log(data);
         leg_end = [];
-        departure = data.routes[0].legs[0].start_address;
-        start_wrap = '<div class="departure">' + departure.replace(',', '<br/>') + '<br/><br/></div>';
-        $(start_wrap).appendTo('div.directions');
-        _ref = data.routes[0].legs;
+        departure_string = data.routes[0].legs[0].start_address;
+        departure = departure_string.split(",");
+        start_wrap = '<div class="departure"><b>' + departure[0] + '</b><br/>';
+        _ref = departure.slice(1);
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          leg = _ref[_i];
+          item = _ref[_i];
+          start_wrap += item + ',';
+        }
+        start_wrap = start_wrap.substring(0, start_wrap.lastIndexOf(','));
+        start_wrap += '<br/><br/></div>';
+        $(start_wrap).appendTo('div.directions');
+        _ref1 = data.routes[0].legs;
+        _results = [];
+        for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
+          leg = _ref1[i];
           leg_end.push(leg.end_address);
           leg_wrap = '<ol class="directions">';
           $(leg_wrap).appendTo('div.directions');
-          _ref1 = leg.steps;
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            step = _ref1[_j];
-            step_wrap = "<li>" + step.html_instructions + '<br/><div class="dist-time" style="text-align:right">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
+          _ref2 = leg.steps;
+          for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+            step = _ref2[_k];
+            step_wrap = "<li>" + step.html_instructions + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
             $(step_wrap).appendTo('ol.directions');
           }
+          leg_wrap = '<div class="dist-time-lg">' + leg.distance.text + " - about " + leg.duration.text + "</div><br/>";
+          $(leg_wrap).appendTo('div.directions');
+          arrival_string = leg.end_address;
+          arrival = arrival_string.split(",");
+          end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>';
+          _ref3 = arrival.slice(1);
+          for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
+            item = _ref3[_l];
+            end_wrap += item + ',';
+          }
+          end_wrap = end_wrap.substring(0, end_wrap.lastIndexOf(','));
+          end_wrap += '<br/><br/></div>';
+          _results.push($(end_wrap).appendTo('div.directions'));
         }
-        leg_wrap = '</ol><div class="arrival">' + leg.end_address.replace(',', '<br/>') + '</div>';
-        return $(leg_wrap).appendTo('div.directions');
+        return _results;
       });
     };
 

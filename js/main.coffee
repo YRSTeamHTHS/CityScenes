@@ -68,23 +68,47 @@ loadMap = () ->
 
 class Navigator
   navigate: () ->
-    $.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling', (data) ->
+    $.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
+    #http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling
+      console.log data
       leg_end = []
-      departure = data.routes[0].legs[0].start_address
-      start_wrap = '<div class="departure">' + departure.replace(',','<br/>') + '<br/><br/></div>'
+      
+      #start address
+      departure_string = data.routes[0].legs[0].start_address #get complete departure address
+      departure = departure_string.split ","; #split address at commas into array
+      start_wrap = '<div class="departure"><b>' + departure[0] + '</b><br/>' #name of place is bolded
+      for item in departure[1..] #rest of address
+        start_wrap += item + ',' #add ,'s back to address
+      start_wrap = start_wrap.substring 0,start_wrap.lastIndexOf(',') #remove the trailing comma
+      start_wrap += '<br/><br/></div>' #close the address div
       $(start_wrap).appendTo 'div.directions' #begin directions formatting, start location
-
-      for leg in data.routes[0].legs
+      
+      #print total travel time
+        
+      #print directions
+      for leg,i in data.routes[0].legs
         leg_end.push leg.end_address
         leg_wrap = '<ol class="directions">'
         $(leg_wrap).appendTo 'div.directions'
-
+        
+        #print each direction step
         for step in leg.steps
-          step_wrap = "<li>" + step.html_instructions + '<br/><div class="dist-time" style="text-align:right">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
+          step_wrap = "<li>" + step.html_instructions + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
           $(step_wrap).appendTo 'ol.directions'
         
-      leg_wrap = '</ol><div class="arrival">' + leg.end_address.replace(',','<br/>') + '</div>'
-      $(leg_wrap).appendTo 'div.directions'
+        #print leg time/distance
+        leg_wrap = '<div class="dist-time-lg">' + leg.distance.text + " - about " + leg.duration.text + "</div><br/>"
+        $(leg_wrap).appendTo 'div.directions'
+        
+        #end address
+        arrival_string = leg.end_address #get complete address
+        arrival = arrival_string.split ","; #split address at commas
+        end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>' #name of place is bolded
+        for item in arrival[1..] #rest of address
+          end_wrap += item + ',' #add commas back into address
+        end_wrap = end_wrap.substring 0,end_wrap.lastIndexOf(',') #remove the trailing comma
+        end_wrap += '<br/><br/></div>' #close div
+        $(end_wrap).appendTo 'div.directions' #write
 
 initialize = () ->
   loadWeather()
