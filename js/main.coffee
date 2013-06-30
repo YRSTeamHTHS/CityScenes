@@ -14,12 +14,12 @@ class Waypoint
 class Station extends Waypoint
   constructor: (station) ->
     if station.availableBikes > 0 and station.statusValue == "In Service"
-      thisPin = new colorPin pinColors.bikeAvailable
+      thisMarker = markers.circle("green")
       @available = true
     else
-      thisPin = new colorPin pinColors.bikeNotAvailable
+      thisMarker = markers.circle("red")
       @available = false
-    super station.latitude, station.longitude, station.stationName, "", thisPin.pinImage(), thisPin.pinShadow()
+    super station.latitude, station.longitude, station.stationName, "", thisMarker
 
 class MapData
   @stations = []
@@ -51,7 +51,7 @@ class MapData
       $.csv.toObjects data, {}, (err, data) ->
         waypoints = []
         for item in data
-          itemWaypoint = new Waypoint item.latitude, item.longitude, item.title, item.description, "img/noun_project_16712.png"
+          itemWaypoint = new Waypoint item.latitude, item.longitude, item.title, item.description, markers.goldStar
           waypoints.push itemWaypoint
 
         callback(waypoints)
@@ -60,8 +60,25 @@ pinColors =
   bikeAvailable: '00FF00'
   bikeNotAvailable: '0000FF'
 
-pins =
+markers =
   film: "img/noun_project_16712.png"
+  circle: (color) ->
+    return {
+      path: google.maps.SymbolPath.CIRCLE
+      fillColor: color
+      fillOpacity: 0.8
+      scale: 5
+      strokeWeight: 3
+      strokeColor: "white"
+    }
+  goldStar: {
+    path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
+    fillColor: "yellow",
+    fillOpacity: 0.8,
+    scale: 0.1,
+    strokeColor: "gold",
+    strokeWeight: 3
+  }
 
 class colorPin
   constructor: (@color = "FE7569") ->
