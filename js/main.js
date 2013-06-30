@@ -90,7 +90,7 @@
     };
 
     DataFetcher.prototype._fetchStations = function(callback) {
-      return $.getJSON('bikedata.php', function(data) {
+      return $.getJSON('bikedata/index.php', function(data) {
         var stationData, stationPoint, stationPoints, _i, _len, _ref;
         stationPoints = [];
         _ref = data.stationBeanList;
