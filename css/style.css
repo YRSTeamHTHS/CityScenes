@@ -45,19 +45,44 @@ body {
     /*-webkit-transition: all 0.5s ease;*/
 }
 
-#map-canvas {
+#map_canvas {
     height: 100%;
 }
 
-.container-fluid {
+#main_wrapper .container-fluid {
     padding-left: 0;
     padding-right: 0;
+}
+
+#main_wrapper {
+    position: absolute;
+    top: 54px;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 #sidebar {
     background-color: #e8e8e8;
     padding: 20px;
     overflow-y: auto;
-    /*position: fixed;*/
-    /*bottom: 0;  */
+    z-index: 100;
+    border-right: 1px solid #aaaaaa;
+}
+
+#directions_wrapper {
+    overflow: auto;
+}
+
+.full_height {
+    height: 100%;
+}
+
+#map_canvas {
+    height: 100%;
+}
+
+#map_wrapper {
+    margin-left: 0;
+    width: 76.595744680851066%; /* 100% - width of span3 */
 }
