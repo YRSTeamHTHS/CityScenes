@@ -37,7 +37,7 @@ class DataFetcher
     p.show map for p in @destinations
 
   _fetchStations: (callback) ->
-    $.getJSON 'bikedata.php', (data) ->
+    $.getJSON 'bikedata/index.php', (data) ->
       stationPoints = []
 
       for stationData in data.stationBeanList
