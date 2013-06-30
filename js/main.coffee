@@ -21,7 +21,7 @@ class Station extends Waypoint
       @available = false
     super station.latitude, station.longitude, station.stationName, "", thisMarker
 
-class MapData
+class DataFetcher
   @stations = []
   @destinations = []
 
@@ -30,7 +30,7 @@ class MapData
       @stations = data
       @_fetchDestinations (err, data) =>
         @destinations = data
-        callback null
+        callback null, {stations: @stations, destinations: @destinations}
 
   show: (map) ->
     p.show map for p in @stations
@@ -84,17 +84,6 @@ loadWeather = () ->
     re = /Current Conditions:\n(.*?)\n/
     match = weatherString.match re
     $("#weather").text match[1]
-
-loadMap = () ->
-  mapOptions =
-    center: new google.maps.LatLng(40.714346,-74.005966)
-    zoom: 12
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  google.maps.visualRefresh = true
-  map = new google.maps.Map document.getElementById("map_canvas"), mapOptions
-  bikeLayer = new google.maps.BicyclingLayer()
-  bikeLayer.setMap(map)
-  return map
 
 class Navigator
   constructor: (@map, @stations, @destinations) ->
@@ -254,25 +243,40 @@ class Navigator
       end_wrap += '<br/><br/></div>' #close div
       $(end_wrap).appendTo 'div.directions' #write
         
-class Interface
-  constructor: (@map, @fetcher, @nav) ->
-    $("#directions_form").submit (e) ->
+class Display
+  _initControls: () ->
+    $("#directions_form").submit (e) =>
       e.preventDefault()
       start = $("#start").val()
       end = $("#end").val()
       stops = $("#stops").val()
-      nav.calculate start, end, stops, (err, data) ->
+      @nav.calculate start, end, stops, (err, data) =>
         console.log data
       return false
 
+  load: () ->
+    loadWeather()
+    @map = @_loadMap()
+    @fetcher = new DataFetcher()
+    @fetcher.fetch (err, result) =>
+      @fetcher.show @map
+      @nav = new Navigator @map, result.stations, result.destinations
+      @_initControls()
+
+  _loadMap: () ->
+    mapOptions =
+      center: new google.maps.LatLng(40.714346,-74.005966)
+      zoom: 12
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    google.maps.visualRefresh = true
+    map = new google.maps.Map document.getElementById("map_canvas"), mapOptions
+    bikeLayer = new google.maps.BicyclingLayer()
+    bikeLayer.setMap(map)
+    return map
+
 initialize = () ->
-  loadWeather()
-  map = loadMap()
-  fetcher = new MapData()
-  fetcher.fetch (err) ->
-    fetcher.show map
-    nav = new Navigator map, fetcher.stations, fetcher.destinations
-    ui = new Interface map, fetcher, nav
+  disp = new Display()
+  disp.load()
 
 $(document).ready () =>
   initialize()
