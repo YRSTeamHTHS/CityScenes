@@ -82,8 +82,9 @@ class Navigator
           step_wrap = "<li>" + step.html_instructions + '<br/><div class="distance" style="text-align:right">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
           $(step_wrap).appendTo 'ol.directions'
 
-          leg_wrap = '<br /></ol><span>' + leg.end_address + '</span>'
-          $(leg_wrap).appendTo 'div.directions'
+        
+      leg_wrap = '<br /></ol><span>' + leg.end_address + '</span>'
+      $(leg_wrap).appendTo 'div.directions'
 
 initialize = () ->
   loadWeather()
