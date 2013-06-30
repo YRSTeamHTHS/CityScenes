@@ -217,3 +217,30 @@ hr {
 #weather:hover {
 	background-color:transparent;
 }
+
+.weather-icon {
+	height:40px;
+	width:40px;
+	margin-top:5px;
+	margin-left:43px	
+}
+
+#ico-cloud {
+	background:url(../cloud.png);	
+}
+
+#ico-sun {
+	background:url(../sun.png);	
+}
+
+#ico-rain {
+	background:url(../rain.png);	
+}
+
+#ico-thunder {
+	background:url(../thunder.png);	
+}
+
+#ico-snow {
+	background:url(../snow.png);	
+}
