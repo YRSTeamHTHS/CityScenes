@@ -157,6 +157,19 @@ class Navigator
       console.log data
       leg_end = []
       
+      #print total travel time
+      total_time = 0
+      for leg in data.routes[0].legs
+        total_time += leg.duration.value
+      minutes = Math.ceil(total_time / 60)
+      hours = Math.floor(minutes/60)
+      minutes = minutes%60
+      if hours > 0
+        time_wrap = '<div class="dist-time-total">Total Travel Time: '+hours+' hours'+minutes+' minutes'+'</div><br/>'
+      else
+        time_wrap = '<div class="dist-time-total">Total Travel Time: '+minutes+' minutes'+'</div><br/>'
+      $(time_wrap).appendTo 'div.directions' #print total time
+      
       #start address
       departure_string = data.routes[0].legs[0].start_address #get complete departure address
       departure = departure_string.split ","; #split address at commas into array
@@ -166,8 +179,6 @@ class Navigator
       start_wrap = start_wrap.substring 0,start_wrap.lastIndexOf(',') #remove the trailing comma
       start_wrap += '<br/><br/></div>' #close the address div
       $(start_wrap).appendTo 'div.directions' #begin directions formatting, start location
-      
-      #print total travel time
         
       #print directions
       for leg,i in data.routes[0].legs
@@ -177,9 +188,8 @@ class Navigator
         
         #print each direction step
         for step in leg.steps
-          instr_text = step.html_instructions.replace('<div>','<br/><span>')
-          instr_text = step.html_instructions.replace('</div>','</span>')
-          console.log instr_text
+          instr_text = step.html_instructions.replace('<div>','<br/><span>') #replace opening div tag with br and span
+          instr_text = step.html_instructions.replace('</div>','</span>') #replace closing div tag with span
           step_wrap = "<li>" + instr_text + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
           $(step_wrap).appendTo 'ol.directions'
         

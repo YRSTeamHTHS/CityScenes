@@ -248,33 +248,47 @@
 
     Navigator.prototype.print = function() {
       return $.getJSON('http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', function(data) {
-        var arrival, arrival_string, departure, departure_string, end_wrap, i, instr_text, item, leg, leg_end, leg_wrap, start_wrap, step, step_wrap, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3, _results;
+        var arrival, arrival_string, departure, departure_string, end_wrap, hours, i, instr_text, item, leg, leg_end, leg_wrap, minutes, start_wrap, step, step_wrap, time_wrap, total_time, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4, _results;
         console.log(data);
         leg_end = [];
+        total_time = 0;
+        _ref = data.routes[0].legs;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          leg = _ref[_i];
+          total_time += leg.duration.value;
+        }
+        minutes = Math.ceil(total_time / 60);
+        hours = Math.floor(minutes / 60);
+        minutes = minutes % 60;
+        if (hours > 0) {
+          time_wrap = '<div class="dist-time-total">Total Travel Time: ' + hours + ' hours' + minutes + ' minutes' + '</div><br/>';
+        } else {
+          time_wrap = '<div class="dist-time-total">Total Travel Time: ' + minutes + ' minutes' + '</div><br/>';
+        }
+        $(time_wrap).appendTo('div.directions');
         departure_string = data.routes[0].legs[0].start_address;
         departure = departure_string.split(",");
         start_wrap = '<div class="departure"><b>' + departure[0] + '</b><br/>';
-        _ref = departure.slice(1);
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          item = _ref[_i];
+        _ref1 = departure.slice(1);
+        for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+          item = _ref1[_j];
           start_wrap += item + ',';
         }
         start_wrap = start_wrap.substring(0, start_wrap.lastIndexOf(','));
         start_wrap += '<br/><br/></div>';
         $(start_wrap).appendTo('div.directions');
-        _ref1 = data.routes[0].legs;
+        _ref2 = data.routes[0].legs;
         _results = [];
-        for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
-          leg = _ref1[i];
+        for (i = _k = 0, _len2 = _ref2.length; _k < _len2; i = ++_k) {
+          leg = _ref2[i];
           leg_end.push(leg.end_address);
           leg_wrap = '<ol class="directions">';
           $(leg_wrap).appendTo('div.directions');
-          _ref2 = leg.steps;
-          for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-            step = _ref2[_k];
+          _ref3 = leg.steps;
+          for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
+            step = _ref3[_l];
             instr_text = step.html_instructions.replace('<div>', '<br/><span>');
             instr_text = step.html_instructions.replace('</div>', '</span>');
-            console.log(instr_text);
             step_wrap = "<li>" + instr_text + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
             $(step_wrap).appendTo('ol.directions');
           }
@@ -287,9 +301,9 @@
           } else {
             end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>';
           }
-          _ref3 = arrival.slice(1);
-          for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
-            item = _ref3[_l];
+          _ref4 = arrival.slice(1);
+          for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
+            item = _ref4[_m];
             end_wrap += item + ',';
           }
           end_wrap = end_wrap.substring(0, end_wrap.lastIndexOf(','));
