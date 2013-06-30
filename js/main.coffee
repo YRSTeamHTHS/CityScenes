@@ -202,7 +202,7 @@ class Navigator
     
     #print total travel time
     total_time = 0
-    for leg in data.routes[0].legs
+    for leg in result.routes[0].legs
       total_time += leg.duration.value
     minutes = Math.ceil(total_time / 60)
     hours = Math.floor(minutes/60)
@@ -214,7 +214,7 @@ class Navigator
     $(time_wrap).appendTo 'div.directions' #print total time
       
     #start address
-    departure_string = data.routes[0].legs[0].start_address #get complete departure address
+    departure_string = result.routes[0].legs[0].start_address #get complete departure address
     departure = departure_string.split ","; #split address at commas into array
     start_wrap = '<div class="departure"><b>' + departure[0] + '</b><br/>' #name of place is bolded
     for item in departure[1..] #rest of address
@@ -224,15 +224,15 @@ class Navigator
     $(start_wrap).appendTo 'div.directions' #begin directions formatting, start location
         
     #print directions
-    for leg,i in data.routes[0].legs
+    for leg,i in result.routes[0].legs
       leg_end.push leg.end_address
       leg_wrap = '<ol class="directions">'
       $(leg_wrap).appendTo 'div.directions'
         
       #print each direction step
       for step in leg.steps
-        instr_text = step.html_instructions.replace('<div>','<br/><span>') #replace opening div tag with br and span
-        instr_text = step.html_instructions.replace('</div>','</span>') #replace closing div tag with span
+        instr_text = step.instructions.replace('<div>','<br/><span>') #replace opening div tag with br and span
+        instr_text = step.instructions.replace('</div>','</span>') #replace closing div tag with span
         step_wrap = "<li>" + instr_text + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
         $(step_wrap).appendTo 'ol.directions'
         
@@ -243,15 +243,15 @@ class Navigator
       #end address
       arrival_string = leg.end_address #get complete address
       arrival = arrival_string.split ","; #split address at commas
-      if i != data.routes[0].legs.length-1 #if a waypoint
+      if i != result.routes[0].legs.length-1 #if a waypoint
         end_wrap = '</ol><div class="waypoint"><b>' + arrival[i] + '</b><br/>' #name of place is bolded
       else
         end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>' #name of place is bolded
       for item in arrival[1..] #rest of address
         end_wrap += item + ',' #add commas back into address
-        end_wrap = end_wrap.substring 0,end_wrap.lastIndexOf(',') #remove the trailing comma
-        end_wrap += '<br/><br/></div>' #close div
-        $(end_wrap).appendTo 'div.directions' #write
+      end_wrap = end_wrap.substring 0,end_wrap.lastIndexOf(',') #remove the trailing comma
+      end_wrap += '<br/><br/></div>' #close div
+      $(end_wrap).appendTo 'div.directions' #write
         
 class Interface
   constructor: (@map, @fetcher, @nav) ->
