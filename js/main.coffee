@@ -10,8 +10,8 @@ plotFilms = (map) ->
         }
 
 plotBikes = (map) ->
-  pinAvailable = new pin pinColors.bikeAvailable
-  pinNotAvailable = new pin pinColors.bikeNotAvailable
+  pinAvailable = new colorPin pinColors.bikeAvailable
+  pinNotAvailable = new colorPin pinColors.bikeNotAvailable
   $.getJSON 'bikedata.php', (data) ->
     for station in data.stationBeanList
       #console.log station
@@ -34,7 +34,7 @@ pinColors =
 pins =
   film: "img/noun_project_16712.png"
 
-class pin
+class colorPin
   constructor: (@color = "FE7569") ->
 
   pinImage: ->
@@ -66,12 +66,34 @@ loadMap = () ->
   google.maps.visualRefresh = true
   map = new google.maps.Map document.getElementById("map-canvas"), mapOptions
 
+class Navigator
+  navigate: () ->
+    $.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling', (data) ->
+      leg_end = []
+      start_wrap = '<span>' + data.routes[0].legs[0].start_address + '<br /><br /></span>'
+      $(start_wrap).appendTo 'div.directions' #begin directions formatting, start location
+
+      for leg in data.routes[0].legs
+        leg_end.push leg.end_address
+        leg_wrap = '<ol class="directions">'
+        $(leg_wrap).appendTo 'div.directions'
+
+        for step in leg.steps
+          step_wrap = "<li>" + step.html_instructions + '<br/><div class="distance" style="text-align:right">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
+          $(step_wrap).appendTo 'ol.directions'
+
+          leg_wrap = '<br /></ol><span>' + leg.end_address + '</span>'
+          $(leg_wrap).appendTo 'div.directions'
+
 initialize = () ->
   loadWeather()
 
   map = loadMap()
   plotFilms map
   plotBikes map
+
+  nav = new Navigator
+  nav.navigate()
 
 $(document).ready () =>
   initialize()

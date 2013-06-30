@@ -57,4 +57,7 @@ body {
 #sidebar {
     background-color: #e8e8e8;
     padding: 20px;
+    overflow-y: auto;
+    /*position: fixed;*/
+    /*bottom: 0;  */
 }
