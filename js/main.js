@@ -385,6 +385,7 @@
 
     Navigator.prototype._print = function(result, startStation, destinations, endStation) {
       var arrival, arrival_string, departure, departure_string, end_wrap, hours, i, instr_text, item, leg, leg_end, leg_wrap, minutes, start_wrap, step, step_wrap, time_wrap, total_time, waypoint_order, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4, _results;
+      console.log("Final Route", result);
       this.directionsDisplay.setDirections(result);
       $(".directions").html("");
       leg_end = [];
@@ -415,6 +416,7 @@
       start_wrap = start_wrap.substring(0, start_wrap.lastIndexOf(','));
       start_wrap += '<br/><br/></div>';
       $(start_wrap).appendTo('div.directions');
+      $(".directions").attr('id', result.routes[0].legs[0].travel_mode);
       _ref2 = result.routes[0].legs;
       _results = [];
       for (i = _k = 0, _len2 = _ref2.length; _k < _len2; i = ++_k) {

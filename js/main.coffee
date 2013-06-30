@@ -227,7 +227,7 @@ class Navigator
     #$.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
     #http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling
 
-    #console.log "Final Route", result
+    console.log "Final Route", result
 
     # Show route on map
     @directionsDisplay.setDirections result
@@ -252,6 +252,7 @@ class Navigator
     $(time_wrap).appendTo 'div.directions' #print total time
       
     #start address
+    
     departure_string = result.routes[0].legs[0].start_address #get complete departure address
     departure = departure_string.split ","; #split address at commas into array
     start_wrap = '<div class="departure"><b>' + startStation.title + '</b><br/>' + departure[0] + '<br/>' #name of place is bolded
@@ -260,7 +261,9 @@ class Navigator
     start_wrap = start_wrap.substring 0,start_wrap.lastIndexOf(',') #remove the trailing comma
     start_wrap += '<br/><br/></div>' #close the address div
     $(start_wrap).appendTo 'div.directions' #begin directions formatting, start location
-
+    
+    $(".directions").attr('id',result.routes[0].legs[0].travel_mode);
+    
     #print directions
     for leg,i in result.routes[0].legs
       leg_end.push leg.end_address
