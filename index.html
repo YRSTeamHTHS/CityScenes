@@ -55,7 +55,7 @@
                     </li>
                     <li style="margin-top:5px;margin-left:13px"><img src="cloud.png" height="40px" width="40px"/></li>
                     <li><a id="weather"></a></li>
-                    <li><a href="extras.html">Help</a></li>
+                    <li><a id="help-button" href="#help" data-toggle="modal"></a></li>
                 </ul>
             </div>
         </div>
@@ -69,18 +69,17 @@
                 <div class="container-fluid">
                     <div class="row-fluid">
                         <form id="directions_form">
-                            <input name="start" id="start" class="span12" type="text" placeholder="Start" value="Battery Gardens">
-                            <input name="end" id="end" class="span12" type="text" placeholder="End" value="Times Square">
-                            <input name="stops" id="stops" class="span12" type="range" min="0" max="8" onchange="updateRangeInput(this.value);">
-
-                            <div class="pull-right">
-                                <span id="rangeTextVal" class="span1"></span>
-                            </div>
-
-							<br><br>
-
-                            <span><b>Types</b></span>
-							<label class="checkbox"><input type="checkbox" name="film" id="film">Film Locations</label>
+                            <input name="start" id="start" class="span12" type="text" placeholder="Start">
+                            <input name="end" id="end" class="span12" type="text" placeholder="End">
+							<div id="parameters">
+                            <span><big>Parameters</big></span>
+								<input name="stops" id="stops" class="span12" type="range" min="0" max="8" onchange="updateRangeInput(this.value);">
+								<div class="pull-right">
+									<span id="rangeTextVal" class="span1">4 Destinations</span>
+								</div>
+								<br><br>
+								<label class="checkbox"><input type="checkbox" name="film" id="film">Film Locations</label>
+							</div>
 
                             <button class="btn btn-warning span12" style="margin-left:0" type="submit">Get Directions</button>
                         </form>
@@ -112,6 +111,17 @@
         </div>
     </div>
 </div>
+<div id="help" class="modal hide">
+	<div class="modal-header">
+		<h2>Help</h2>
+	</div>
+	<div class="modal-body">
+		<p>This is the help text.</p>
+	</div>
+</div>
+<script>
+$('#help').modal(); 
+</script>
 <script src="js/bootstrap-transition.js"></script>
 <script src="js/bootstrap-alert.js"></script>
 <script src="js/bootstrap-modal.js"></script>
