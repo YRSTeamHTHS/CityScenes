@@ -354,16 +354,16 @@
           instr_text = step.instructions.replace('<div>', '<br/><span>');
           instr_text = step.instructions.replace('</div>', '</span>');
           step_wrap = "<li>" + instr_text + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
-          $(step_wrap).appendTo('ol.directions');
+          $(step_wrap).appendTo('ol.directions:last-child');
         }
         leg_wrap = '<div class="dist-time-lg">' + leg.distance.text + " - about " + leg.duration.text + "</div><hr><br/>";
         $(leg_wrap).appendTo('div.directions');
         arrival_string = leg.end_address;
         arrival = arrival_string.split(",");
         if (i !== result.routes[0].legs.length - 1) {
-          end_wrap = '</ol><div class="waypoint"><b>' + arrival[i] + '</b><br/>';
+          end_wrap = '</ol><div class="waypoint"><b>' + arrival[0] + '</b><br/>';
         } else {
-          end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>';
+          end_wrap = '</ol><div class="arrival"><b>' + arrival[0] + '</b><br/>';
         }
         _ref4 = arrival.slice(1);
         for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
