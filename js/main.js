@@ -24,7 +24,8 @@
         icon: this.icon,
         shadow: this.shadow
       };
-      return marker = new google.maps.Marker(options);
+      marker = new google.maps.Marker(options);
+      return marker;
     };
 
     return Waypoint;
@@ -86,19 +87,28 @@
     };
 
     DataFetcher.prototype.show = function(map) {
-      var p, _i, _j, _len, _len1, _ref, _ref1, _results;
-      _ref = this.stations;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        p = _ref[_i];
-        p.show(map);
-      }
-      _ref1 = this.destinations;
-      _results = [];
-      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-        p = _ref1[_j];
-        _results.push(p.show(map));
-      }
-      return _results;
+      var destinationArray, destinationClusterer, p, stationArray;
+      stationArray = (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.stations;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          p = _ref[_i];
+          _results.push(p.show(map));
+        }
+        return _results;
+      }).call(this);
+      destinationArray = (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.destinations;
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          p = _ref[_i];
+          _results.push(p.show(map));
+        }
+        return _results;
+      }).call(this);
+      return destinationClusterer = new MarkerClusterer(map.gmap, destinationArray);
     };
 
     DataFetcher.prototype._fetchStations = function(callback) {

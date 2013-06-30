@@ -10,6 +10,7 @@ class Waypoint
       icon: @icon
       shadow: @shadow
     marker = new google.maps.Marker options
+    return marker
 
 class Station extends Waypoint
   constructor: (station) ->
@@ -38,8 +39,12 @@ class DataFetcher
         callback null, {stations: @stations, destinations: @destinations, destinationTypes: @destinationTypes}
 
   show: (map) ->
-    p.show map for p in @stations
-    p.show map for p in @destinations
+    stationArray = (p.show map for p in @stations)
+    #stationClusterer = new MarkerClusterer map.gmap, stationArray
+
+    destinationArray = (p.show map for p in @destinations)
+    destinationClusterer = new MarkerClusterer map.gmap, destinationArray
+
 
   _fetchStations: (callback) ->
     $.getJSON 'bikedata/index.php', (data) ->
