@@ -86,7 +86,7 @@ markers =
     path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
     fillColor: "yellow",
     fillOpacity: 0.8,
-    scale: 0.08,
+    scale: 0.07,
     strokeColor: "gold",
     strokeWeight: 3
   }
@@ -99,7 +99,16 @@ loadWeather = () ->
     re = /Current Conditions:\n(.*?)\n/
     match = weatherString.match re
     $("#weather").text match[1]
-
+    #change weather icon STREAMLINE TO WORK WITH INTEGER CODES
+    if (match[1].indexOf("fair") !=-1 || match[1].indexOf("sunny") !=-1 || match[1].indexOf("hot")!=-1 || match[1].indexOf("clear" !=-1))
+      $(".weather-icon").attr('id','ico-sun');
+    else if (match[1].indexOf("rain") !=-1 || match[1].indexOf("shower") !=-1 || match[1].indexOf("drizzle") !=-1)
+      $(".weather-icon").attr('id','ico-rain');
+    else if (match[1].indexOf("thunder") !=-1)
+      $(".weather-icon").attr('id','ico-thunder');
+    else if (match[1].indexOf("snow") !=-1)
+      $(".weather-icon").attr('id','ico-snow');
+    else $(".weather-icon").attr('id','ico-cloud');
 class Navigator
   constructor: (@map, @stations, @destinations, @destinationTypes) ->
     @directionsService = new google.maps.DirectionsService()
@@ -218,7 +227,7 @@ class Navigator
     #$.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
     #http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling
 
-    console.log "Final Route", result
+    #console.log "Final Route", result
 
     # Show route on map
     @directionsDisplay.setDirections result

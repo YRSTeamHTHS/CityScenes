@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>CityBike</title>
+    <title>CityScenes</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link href="css/bootstrap.css" rel="stylesheet">
@@ -61,7 +61,7 @@
 			<span id="mainLogo">CityScenes</span>
 			<span class="pull-right" style="margin-right:-20px;">
 				<ul class="nav" style="margin:0;">
-					<li style="margin-top:5px;margin-left:43px"><img src="cloud.png" height="40px" width="40px"/></li>
+					<li class= "weather-icon" id=""></li>
                     <li><a id="weather"></a></li>
                     <li><a id="help-button" href="#help" data-toggle="modal"></a></li>
 				</ul>
@@ -101,7 +101,7 @@
 									<span id="rangeTextVal" class="span1">4 Destinations</span>
 								</div>
 								<br><br>
-								<div id="destination_types"></div>
+								<label class="checkbox"><input type="checkbox" name="film" id="film">Film Locations</label>
 							</div>
 
                             <button class="btn btn-warning span12" style="margin-left:0" type="submit">Get Directions</button>
@@ -147,7 +147,7 @@
     <div class="modal-body">
         <h2>Loading...</h2>
     </div>
-</div>
+</div>  
 
 <script>
 $('#help').modal(); 
