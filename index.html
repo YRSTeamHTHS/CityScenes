@@ -54,7 +54,7 @@
                     </li>
                     <li style="margin-top:5px;margin-left:13px"><img src="cloud.png" height="40px" width="40px"/></li>
                     <li><a id="weather"></a></li>
-                    <li><a href="extras.html">Help</a></li>
+                    <li><a href="#help" data-toggle="modal">Help</a></li>
                 </ul>
             </div>
         </div>
@@ -111,6 +111,17 @@
         </div>
     </div>
 </div>
+<div id="help" class="modal hide">
+	<div class="modal-header">
+		<h2>Help</h2>
+	</div>
+	<div class="modal-body">
+		<p>This is the help text.</p>
+	</div>
+</div>
+<script>
+$('#help').modal(); 
+</script>
 <script src="js/bootstrap-transition.js"></script>
 <script src="js/bootstrap-alert.js"></script>
 <script src="js/bootstrap-modal.js"></script>
