@@ -109,16 +109,24 @@ loadWeather = () ->
     else if (match[1].indexOf("snow") !=-1)
       $(".weather-icon").attr('id','ico-snow');
     else $(".weather-icon").attr('id','ico-cloud');
+
 class Navigator
   constructor: (@map, @stations, @destinations, @destinationTypes) ->
-    @directionsService = new google.maps.DirectionsService()
+    #@directionsService = new google.maps.DirectionsService()
     @geocoder = new google.maps.Geocoder()
-    @directionsDisplay = new google.maps.DirectionsRenderer()
-    @directionsDisplay.setMap @map.gmap
+    @directionsDisplays = []
+    for i in [0,1,2]
+      options = {}
+      if i in [0,2]
+        options.preserveViewport = true
+      @directionsDisplays[i] = new google.maps.DirectionsRenderer(options)
+      @directionsDisplays[i].setMap @map.gmap
 
   _directions: (options, callback) ->
-    @directionsService.route options, (result, status) ->
+    directionsService = new google.maps.DirectionsService()
+    directionsService.route options, (result, status) ->
       if status == google.maps.DirectionsStatus.OK
+        console.log "Direction Result", result
         callback null, result
 
   _distance: (LatLng1, LatLng2) ->
@@ -200,9 +208,6 @@ class Navigator
         startStation = @nearestStation(startLoc)
         endStation = @nearestStation(endLoc)
 
-        # Find walking directions to/from biking stations
-
-
         # Find direct biking route
         options =
           origin: startStation.location
@@ -215,28 +220,63 @@ class Navigator
           DirectionsWaypoints = @_destinationsToDirectionsWaypoints(destinations)
           console.log "DirectionsWaypoints", DirectionsWaypoints
 
+          options = []
+
+          # Navigate to the start bike station
+          options.push {
+            origin: startLoc
+            destination: startStation.location
+            travelMode: google.maps.TravelMode.WALKING
+          }
+
           # Navigate through the waypoints
-          options =
+          options.push {
             origin: startStation.location
             destination: endStation.location
             travelMode: google.maps.TravelMode.BICYCLING
             optimizeWaypoints: true
             waypoints: DirectionsWaypoints
-          @_directions options, (err, result) =>
-            @_print result, startStation, destinations, endStation
+          }
+
+          # Navigate from the end bike station
+          options.push {
+            origin: endStation.location
+            destination: endLoc
+            travelMode: google.maps.TravelMode.WALKING
+          }
+
+          console.log "Directions Options", options
+
+          async.map options, @_directions, (err, results) =>
+            console.log "Directions Results", results
+            @_print results, startStation, destinations, endStation
             callback null, result
 
-  _print: (result, startStation, destinations, endStation) ->
-    #$.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
-    #http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling
-
-    #console.log "Final Route", result
-
-    # Show route on map
-    @directionsDisplay.setDirections result
+  _print: (results, startStation, destinations, endStation) ->
+    # (Results is a array with three result elements: [walking, biking, walking])
 
     # Clear old directions
     $(".directions").html("")
+
+    # Merge waypoint titles
+    titles = []
+    titles.push ["Start", startStation.title]
+    midTitles = [startStation.title].concat((i.title for i in destinations))
+    midTitles.push(endStation.title)
+    titles.push midTitles
+    titles.push [endStation.title, "End"]
+
+    for i in [0,1,2]
+      @_printRoute(results[i], titles[i])
+      # Show route on map
+      @directionsDisplays[i].setDirections results[i]
+
+  _printRoute: (result, titles) ->
+    #$.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
+    #http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling
+
+    console.log "Printing result", result
+    console.log "Printing titles", titles
 
     leg_end = []
     waypoint_order = result.routes[0].waypoint_order
@@ -257,7 +297,7 @@ class Navigator
     #start address
     departure_string = result.routes[0].legs[0].start_address #get complete departure address
     departure = departure_string.split ","; #split address at commas into array
-    start_wrap = '<div class="departure"><b>' + startStation.title + '</b><br/>' + departure[0] + '<br/>' #name of place is bolded
+    start_wrap = '<div class="departure"><b>' + titles[0] + '</b><br/>' + departure[0] + '<br/>' #name of place is bolded
     for item in departure[1..] #rest of address
       start_wrap += item + ',' #add ,'s back to address
     start_wrap = start_wrap.substring 0,start_wrap.lastIndexOf(',') #remove the trailing comma
@@ -285,9 +325,9 @@ class Navigator
       arrival_string = leg.end_address #get complete address
       arrival = arrival_string.split ","; #split address at commas
       if i != result.routes[0].legs.length-1 #if a waypoint
-        end_wrap = '</ol><div class="waypoint"><b>' + destinations[waypoint_order[i]].title + '</b><br/>' + arrival[0] + '<br/>' #name of place is bolded
+        end_wrap = '</ol><div class="waypoint"><b>' + titles[waypoint_order[i]+1] + '</b><br/>' + arrival[0] + '<br/>' #name of place is bolded
       else
-        end_wrap = '</ol><div class="arrival"><b>' + endStation.title + '</b><br/>' + arrival[0] + '<br/>' #name of place is bolded
+        end_wrap = '</ol><div class="arrival"><b>' + titles[titles.length-1] + '</b><br/>' + arrival[0] + '<br/>' #name of place is bolded
       for item in arrival[1..] #rest of address
         end_wrap += item + ',' #add commas back into address
       end_wrap = end_wrap.substring 0,end_wrap.lastIndexOf(',') #remove the trailing comma

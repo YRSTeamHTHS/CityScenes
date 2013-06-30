@@ -218,19 +218,31 @@
   Navigator = (function() {
 
     function Navigator(map, stations, destinations, destinationTypes) {
+      var i, options, _i, _len, _ref;
       this.map = map;
       this.stations = stations;
       this.destinations = destinations;
       this.destinationTypes = destinationTypes;
-      this.directionsService = new google.maps.DirectionsService();
       this.geocoder = new google.maps.Geocoder();
-      this.directionsDisplay = new google.maps.DirectionsRenderer();
-      this.directionsDisplay.setMap(this.map.gmap);
+      this.directionsDisplays = [];
+      _ref = [0, 1, 2];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        i = _ref[_i];
+        options = {};
+        if (i === 0 || i === 2) {
+          options.preserveViewport = true;
+        }
+        this.directionsDisplays[i] = new google.maps.DirectionsRenderer(options);
+        this.directionsDisplays[i].setMap(this.map.gmap);
+      }
     }
 
     Navigator.prototype._directions = function(options, callback) {
-      return this.directionsService.route(options, function(result, status) {
+      var directionsService;
+      directionsService = new google.maps.DirectionsService();
+      return directionsService.route(options, function(result, status) {
         if (status === google.maps.DirectionsStatus.OK) {
+          console.log("Direction Result", result);
           return callback(null, result);
         }
       });
@@ -372,15 +384,28 @@
             console.log("Destinations", destinations);
             DirectionsWaypoints = _this._destinationsToDirectionsWaypoints(destinations);
             console.log("DirectionsWaypoints", DirectionsWaypoints);
-            options = {
+            options = [];
+            options.push({
+              origin: startLoc,
+              destination: startStation.location,
+              travelMode: google.maps.TravelMode.WALKING
+            });
+            options.push({
               origin: startStation.location,
               destination: endStation.location,
               travelMode: google.maps.TravelMode.BICYCLING,
               optimizeWaypoints: true,
               waypoints: DirectionsWaypoints
-            };
-            return _this._directions(options, function(err, result) {
-              _this._print(result, startStation, destinations, endStation);
+            });
+            options.push({
+              origin: endStation.location,
+              destination: endLoc,
+              travelMode: google.maps.TravelMode.WALKING
+            });
+            console.log("Directions Options", options);
+            return async.map(options, _this._directions, function(err, results) {
+              console.log("Directions Results", results);
+              _this._print(results, startStation, destinations, endStation);
               return callback(null, result);
             });
           });
@@ -388,10 +413,37 @@
       });
     };
 
-    Navigator.prototype._print = function(result, startStation, destinations, endStation) {
-      var arrival, arrival_string, departure, departure_string, end_wrap, hours, i, instr_text, item, leg, leg_end, leg_wrap, minutes, start_wrap, step, step_wrap, time_wrap, total_time, waypoint_order, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4, _results;
-      this.directionsDisplay.setDirections(result);
+    Navigator.prototype._print = function(results, startStation, destinations, endStation) {
+      var i, midTitles, titles, _i, _len, _ref, _results;
       $(".directions").html("");
+      titles = [];
+      titles.push(["Start", startStation.title]);
+      midTitles = [startStation.title].concat((function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = destinations.length; _i < _len; _i++) {
+          i = destinations[_i];
+          _results.push(i.title);
+        }
+        return _results;
+      })());
+      midTitles.push(endStation.title);
+      titles.push(midTitles);
+      titles.push([endStation.title, "End"]);
+      _ref = [0, 1, 2];
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        i = _ref[_i];
+        this._printRoute(results[i], titles[i]);
+        _results.push(this.directionsDisplays[i].setDirections(results[i]));
+      }
+      return _results;
+    };
+
+    Navigator.prototype._printRoute = function(result, titles) {
+      var arrival, arrival_string, departure, departure_string, end_wrap, hours, i, instr_text, item, leg, leg_end, leg_wrap, minutes, start_wrap, step, step_wrap, time_wrap, total_time, waypoint_order, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4, _results;
+      console.log("Printing result", result);
+      console.log("Printing titles", titles);
       leg_end = [];
       waypoint_order = result.routes[0].waypoint_order;
       total_time = 0;
@@ -411,7 +463,7 @@
       $(time_wrap).appendTo('div.directions');
       departure_string = result.routes[0].legs[0].start_address;
       departure = departure_string.split(",");
-      start_wrap = '<div class="departure"><b>' + startStation.title + '</b><br/>' + departure[0] + '<br/>';
+      start_wrap = '<div class="departure"><b>' + titles[0] + '</b><br/>' + departure[0] + '<br/>';
       _ref1 = departure.slice(1);
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         item = _ref1[_j];
@@ -440,9 +492,9 @@
         arrival_string = leg.end_address;
         arrival = arrival_string.split(",");
         if (i !== result.routes[0].legs.length - 1) {
-          end_wrap = '</ol><div class="waypoint"><b>' + destinations[waypoint_order[i]].title + '</b><br/>' + arrival[0] + '<br/>';
+          end_wrap = '</ol><div class="waypoint"><b>' + titles[waypoint_order[i] + 1] + '</b><br/>' + arrival[0] + '<br/>';
         } else {
-          end_wrap = '</ol><div class="arrival"><b>' + endStation.title + '</b><br/>' + arrival[0] + '<br/>';
+          end_wrap = '</ol><div class="arrival"><b>' + titles[titles.length - 1] + '</b><br/>' + arrival[0] + '<br/>';
         }
         _ref4 = arrival.slice(1);
         for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
