@@ -386,17 +386,24 @@
 
   Display = (function() {
 
-    function Display() {}
+    function Display() {
+      this.loading_modal = $("#loading_modal");
+      this.loading_modal.modal();
+    }
 
     Display.prototype._initControls = function() {
       var _this = this;
       return $("#directions_form").submit(function(e) {
         var end, start, stops;
+        _this.loading_modal.modal("show");
         e.preventDefault();
         start = $("#start").val();
         end = $("#end").val();
         stops = $("#stops").val();
-        _this.nav.calculate(start, end, stops, function(err, data) {});
+        _this.nav.calculate(start, end, stops, function(err, data) {
+          console.log(data);
+          return _this.loading_modal.modal("hide");
+        });
         return false;
       });
     };
@@ -410,7 +417,8 @@
       return this.fetcher.fetch(function(err, result) {
         _this.fetcher.show(_this.map);
         _this.nav = new Navigator(_this.map, result.stations, result.destinations);
-        return _this._initControls();
+        _this._initControls();
+        return _this.loading_modal.modal("hide");
       });
     };
 

@@ -250,14 +250,20 @@ class Navigator
       $(end_wrap).appendTo 'div.directions' #write
         
 class Display
+  constructor: () ->
+    @loading_modal = $("#loading_modal")
+    @loading_modal.modal()
+
   _initControls: () ->
     $("#directions_form").submit (e) =>
+      @loading_modal.modal("show")
       e.preventDefault()
       start = $("#start").val()
       end = $("#end").val()
       stops = $("#stops").val()
       @nav.calculate start, end, stops, (err, data) =>
-        #console.log data
+        console.log data
+        @loading_modal.modal("hide")
       return false
 
   load: () ->
@@ -269,6 +275,7 @@ class Display
       @fetcher.show @map
       @nav = new Navigator @map, result.stations, result.destinations
       @_initControls()
+      @loading_modal.modal("hide")
 
 class Map
   load: () ->
