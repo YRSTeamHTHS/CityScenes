@@ -205,32 +205,26 @@
         return console.log(result);
       });
       return $.getJSON('http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling', function(data) {
-        var leg, leg_end, leg_wrap, start_wrap, step, step_wrap, _j, _len1, _ref1, _results;
+        var departure, leg, leg_end, leg_wrap, start_wrap, step, step_wrap, _j, _k, _len1, _len2, _ref1, _ref2;
         leg_end = [];
-        start_wrap = '<span>' + data.routes[0].legs[0].start_address + '<br /><br /></span>';
+        departure = data.routes[0].legs[0].start_address;
+        start_wrap = '<div class="departure">' + departure.replace(',', '<br/>') + '<br/><br/></div>';
         $(start_wrap).appendTo('div.directions');
         _ref1 = data.routes[0].legs;
-        _results = [];
         for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
           leg = _ref1[_j];
           leg_end.push(leg.end_address);
           leg_wrap = '<ol class="directions">';
           $(leg_wrap).appendTo('div.directions');
-          _results.push((function() {
-            var _k, _len2, _ref2, _results1;
-            _ref2 = leg.steps;
-            _results1 = [];
-            for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-              step = _ref2[_k];
-              step_wrap = "<li>" + step.html_instructions + '<br/><div class="distance" style="text-align:right">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
-              $(step_wrap).appendTo('ol.directions');
-              leg_wrap = '<br /></ol><span>' + leg.end_address + '</span>';
-              _results1.push($(leg_wrap).appendTo('div.directions'));
-            }
-            return _results1;
-          })());
+          _ref2 = leg.steps;
+          for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+            step = _ref2[_k];
+            step_wrap = "<li>" + step.html_instructions + '<br/><div class="dist-time" style="text-align:right">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
+            $(step_wrap).appendTo('ol.directions');
+          }
         }
-        return _results;
+        leg_wrap = '</ol><div class="arrival">' + leg.end_address.replace(',', '<br/>') + '</div>';
+        return $(leg_wrap).appendTo('div.directions');
       });
     };
 

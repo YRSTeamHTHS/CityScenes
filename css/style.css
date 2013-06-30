@@ -86,3 +86,38 @@ body {
     margin-left: 0;
     width: 76.595744680851066%; /* 100% - width of span3 */
 }
+
+.departure {
+	font-size:18px;
+	color:black;
+	background:url(../departure.png);
+	background-size:40px 40px;
+	background-repeat:no-repeat;
+	padding-left:40px;
+}
+
+.departure:first-line{
+	font-weight:bold;
+}
+
+.arrival {
+	font-size:18px;
+	color:black;
+	background:url(../arrival.png);
+	background-size:40px 40px;
+	background-repeat:no-repeat;
+	padding-left:40px;
+}
+
+.arrival:first-line{
+	font-weight:bold;
+}
+
+.dist-time{
+	color:rgb(158, 158, 158);
+	font-size:12px;
+}
+
+#directions_wrapper {
+	overflow:hidden;
+}
