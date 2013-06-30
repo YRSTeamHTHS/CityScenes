@@ -158,7 +158,8 @@ hr {
 	background:url(../question-mark.png);
 	background-size: 30px 30px;
 	background-repeat:no-repeat;
-	margin-top:8px;
+	margin-top:10px;
+	margin-left:5px;
 }
 
 #start {
@@ -174,4 +175,14 @@ hr {
 
 #parameters {
 	margin-bottom:25px;
+}
+
+#search-button {
+	background:url(../search.png);
+	background-size: 25px 25px;
+	background-repeat:no-repeat;
+	margin-top:8px;
+	height:25px;
+	width:25px;
+	margin-left:5px;
 }
