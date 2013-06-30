@@ -266,10 +266,33 @@ class Navigator
     titles.push midTitles
     titles.push [endStation.title, "End"]
 
+    total_time = 0
+    for i in [0,1,2]
+      total_time += @_routeTime(results[i])
+
+    @_printTime(total_time)
+
     for i in [0,1,2]
       @_printRoute(results[i], titles[i])
       # Show route on map
       @directionsDisplays[i].setDirections results[i]
+
+  _routeTime: (result) ->
+    #print total travel time
+    total_time = 0
+    for leg in result.routes[0].legs
+      total_time += leg.duration.value
+    return total_time
+
+  _printTime: (total_time) ->
+    minutes = Math.ceil(total_time / 60)
+    hours = Math.floor(minutes/60)
+    minutes = minutes%60
+    if hours > 0
+      time_wrap = '<div class="dist-time-total">Total Travel Time: '+hours+' hours, '+minutes+' minutes'+'</div><br/>'
+    else
+      time_wrap = '<div class="dist-time-total">Total Travel Time: '+minutes+' minutes'+'</div><br/>'
+    $(time_wrap).appendTo 'div.directions' #print total time
 
   _printRoute: (result, titles) ->
     #$.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
@@ -281,24 +304,11 @@ class Navigator
     leg_end = []
     waypoint_order = result.routes[0].waypoint_order
 
-    #print total travel time
-    total_time = 0
-    for leg in result.routes[0].legs
-      total_time += leg.duration.value
-    minutes = Math.ceil(total_time / 60)
-    hours = Math.floor(minutes/60)
-    minutes = minutes%60
-    if hours > 0
-      time_wrap = '<div class="dist-time-total">Total Travel Time: '+hours+' hours'+minutes+' minutes'+'</div><br/>'
-    else
-      time_wrap = '<div class="dist-time-total">Total Travel Time: '+minutes+' minutes'+'</div><br/>'
-    $(time_wrap).appendTo 'div.directions' #print total time
-      
     #start address
     
     departure_string = result.routes[0].legs[0].start_address #get complete departure address
     departure = departure_string.split ","; #split address at commas into array
-    start_wrap = '<div class="departure"><b>' + titles[0] + '</b><br/>' + departure[0] + '<br/>' #name of place is bolded
+    start_wrap = '<hr/><div class="departure"><b>' + titles[0] + '</b><br/>' + departure[0] + '<br/>' #name of place is bolded
     for item in departure[1..] #rest of address
       start_wrap += item + ',' #add ,'s back to address
     start_wrap = start_wrap.substring 0,start_wrap.lastIndexOf(',') #remove the trailing comma
