@@ -158,4 +158,13 @@ hr {
 	background:url(../question-mark.png);
 	background-size: 30px 30px;
 	background-repeat:no-repeat;
+	margin-top:8px;
+}
+
+#start {
+	background-color:rgb(205, 241, 205);
+}
+
+#end {
+	background-color:rgb(252, 218, 218);
 }
