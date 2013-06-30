@@ -154,14 +154,17 @@
   };
 
   loadMap = function() {
-    var map, mapOptions;
+    var bikeLayer, map, mapOptions;
     mapOptions = {
       center: new google.maps.LatLng(40.714346, -74.005966),
       zoom: 12,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     google.maps.visualRefresh = true;
-    return map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+    map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+    bikeLayer = new google.maps.BicyclingLayer();
+    bikeLayer.setMap(map);
+    return map;
   };
 
   Navigator = (function() {
@@ -171,6 +174,8 @@
       this.destinations = destinations;
       this.directionsService = new google.maps.DirectionsService();
       this.geocoder = new google.maps.Geocoder();
+      this.directionsDisplay = new google.maps.DirectionsRenderer();
+      this.directionsDisplay.setMap(map);
     }
 
     Navigator.prototype._directions = function(options, callback) {
@@ -300,8 +305,10 @@
     };
 
     Navigator.prototype._print = function(result) {
-      var arrival, arrival_string, departure, departure_string, end_wrap, hours, i, instr_text, item, leg, leg_end, leg_wrap, minutes, start_wrap, step, step_wrap, time_wrap, total_time, _i, _j, _k, _l, _len, _len1, _len2, _len3, _len4, _m, _ref, _ref1, _ref2, _ref3, _ref4, _results;
-      console.log(data);
+      var arrival, arrival_string, departure, departure_string, end_wrap, hours, i, instr_text, item, leg, leg_end, leg_wrap, minutes, start_wrap, step, step_wrap, time_wrap, total_time, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3, _results;
+      console.log(result);
+      this.directionsDisplay.setDirections(result);
+      $(".directions").html("");
       leg_end = [];
       total_time = 0;
       _ref = data.routes[0].legs;
@@ -353,14 +360,19 @@
         } else {
           end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>';
         }
-        _ref4 = arrival.slice(1);
-        for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
-          item = _ref4[_m];
-          end_wrap += item + ',';
-        }
-        end_wrap = end_wrap.substring(0, end_wrap.lastIndexOf(','));
-        end_wrap += '<br/><br/></div>';
-        _results.push($(end_wrap).appendTo('div.directions'));
+        _results.push((function() {
+          var _len4, _m, _ref4, _results1;
+          _ref4 = arrival.slice(1);
+          _results1 = [];
+          for (_m = 0, _len4 = _ref4.length; _m < _len4; _m++) {
+            item = _ref4[_m];
+            end_wrap += item + ',';
+            end_wrap = end_wrap.substring(0, end_wrap.lastIndexOf(','));
+            end_wrap += '<br/><br/></div>';
+            _results1.push($(end_wrap).appendTo('div.directions'));
+          }
+          return _results1;
+        })());
       }
       return _results;
     };
