@@ -106,7 +106,7 @@
       return $.getJSON('http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling', function(data) {
         var leg, leg_end, leg_wrap, start_wrap, step, step_wrap, _i, _j, _len, _len1, _ref, _ref1;
         leg_end = [];
-        start_wrap = '<span>' + data.routes[0].legs[0].start_address + '<br /><br /></span>';
+        start_wrap = '<div class="departure">' + data.routes[0].legs[0].start_address + '<br /><br /></div>';
         $(start_wrap).appendTo('div.directions');
         _ref = data.routes[0].legs;
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -117,11 +117,11 @@
           _ref1 = leg.steps;
           for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
             step = _ref1[_j];
-            step_wrap = "<li>" + step.html_instructions + '<br/><div class="distance" style="text-align:right">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
+            step_wrap = "<li>" + step.html_instructions + '<br/><div class="dist-time" style="text-align:right">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
             $(step_wrap).appendTo('ol.directions');
           }
         }
-        leg_wrap = '<br /></ol><span>' + leg.end_address + '</span>';
+        leg_wrap = '<br /></ol><div class="arrival">' + leg.end_address + '</div>';
         return $(leg_wrap).appendTo('div.directions');
       });
     };

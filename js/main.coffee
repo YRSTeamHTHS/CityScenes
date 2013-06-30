@@ -70,7 +70,7 @@ class Navigator
   navigate: () ->
     $.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling', (data) ->
       leg_end = []
-      start_wrap = '<span>' + data.routes[0].legs[0].start_address + '<br /><br /></span>'
+      start_wrap = '<div class="departure">' + data.routes[0].legs[0].start_address + '<br /><br /></div>'
       $(start_wrap).appendTo 'div.directions' #begin directions formatting, start location
 
       for leg in data.routes[0].legs
@@ -79,11 +79,10 @@ class Navigator
         $(leg_wrap).appendTo 'div.directions'
 
         for step in leg.steps
-          step_wrap = "<li>" + step.html_instructions + '<br/><div class="distance" style="text-align:right">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
+          step_wrap = "<li>" + step.html_instructions + '<br/><div class="dist-time" style="text-align:right">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
           $(step_wrap).appendTo 'ol.directions'
-
         
-      leg_wrap = '<br /></ol><span>' + leg.end_address + '</span>'
+      leg_wrap = '<br /></ol><div class="arrival">' + leg.end_address + '</div>'
       $(leg_wrap).appendTo 'div.directions'
 
 initialize = () ->
