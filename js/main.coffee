@@ -92,25 +92,36 @@ loadMap = () ->
     mapTypeId: google.maps.MapTypeId.ROADMAP
   google.maps.visualRefresh = true
   map = new google.maps.Map document.getElementById("map_canvas"), mapOptions
+  bikeLayer = new google.maps.BicyclingLayer()
+  bikeLayer.setMap(map)
+  return map
 
 class Navigator
   constructor: (@map, @stations, @destinations) ->
     @directionsService = new google.maps.DirectionsService()
-    @geocoder = new google.maps.Geocoder();
+    @geocoder = new google.maps.Geocoder()
+    @directionsDisplay = new google.maps.DirectionsRenderer()
+    @directionsDisplay.setMap map
 
   _directions: (options, callback) ->
     @directionsService.route options, (result, status) ->
-      if status == google.maps.DirectionStatus.OK
+      if status == google.maps.DirectionsStatus.OK
         callback result
 
   _distance: (LatLng1, LatLng2) ->
-    return math.sqrt math.pow(LatLng1.lat() - LatLng2.lat(), 2) + math.pow(LatLng1.lng() - LatLng2.lng(), 2)
+    return Math.pow(LatLng1.lat() - LatLng2.lat(), 2) + Math.pow(LatLng1.lng() - LatLng2.lng(), 2)
 
-  _sortArrayByDistance: (array) ->
+  _distance_raw: (a, b) ->
+    return Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2)
+
+  _LatLng_to_raw: (LatLng) ->
+    return [LatLng.lat(), LatLng.lng()]
+
+  _sort_array_by_distance: (array) ->
     compare = (a,b) ->
-      if a.distance < b.distance
+      if a[0] < b[0]
         return -1
-      if a.distance > b.distance
+      if a[0] > b[0]
         return 1
       return 0
     array.sort compare
@@ -119,7 +130,7 @@ class Navigator
   geocode: (address, callback) ->
     @geocoder.geocode {address: address}, (results, status) ->
       if status == google.maps.GeocoderStatus.OK
-        callback(results.geometry.location)
+        callback(results[0].geometry.location)
 
   nearestStation: (location) ->
     minDistance = Infinity
@@ -128,81 +139,120 @@ class Navigator
       distance = @_distance(station.location, location)
       if distance < minDistance
         nearest = station
+        minDistance = distance
     return nearest
+
+  _nearestDestinations: (path, count) ->
+    all = []
+    for point in path
+      a = [point.jb, point.kb]
+      list = []
+      for destination in @destinations
+        list.push [@_distance_raw(a, @_LatLng_to_raw(destination.location)), destination]
+      list = @_sort_array_by_distance(list)[0..count]
+      all = all.concat list
+    all = @_sort_array_by_distance(all)[0..count]
+    DirectionsWaypoints = ({location: i[1].location} for i in all)
+    console.log DirectionsWaypoints
+    return DirectionsWaypoints
 
   calculate: (start, end, destinationCount, callback) ->
     # Geocode start and end points
-    @geocode start, (location) ->
+    @geocode start, (location) =>
       startLoc = location
-      @geocode end, (location) ->
+      @geocode end, (location) =>
         endLoc = location
 
         # Find nearest available bike stations to start and end points
-        startStation = nearestStation(startLoc)
-        endStation = nearestStation(endLoc)
+        startStation = @nearestStation(startLoc)
+        endStation = @nearestStation(endLoc)
 
         # Find direct biking route
         options =
           origin: startStation.location
           destination: endStation.location
-          travelMode: google.maps.TravelMode.BIKING
-        @_directions options, (result) ->
-          console.log result
+          travelMode: google.maps.TravelMode.BICYCLING
+        @_directions options, (result) =>
+          # Search for waypoints along route
+          DirectionsWaypoints = @_nearestDestinations(result.routes[0].overview_path, destinationCount)
 
-        # Search for waypoints along route
+          # Navigate through the waypoints
+          options =
+            origin: startStation.location
+            destination: endStation.location
+            travelMode: google.maps.TravelMode.BICYCLING
+            optimizeWaypoints: true
+            waypoints: DirectionsWaypoints
+          @_directions options, (result) =>
+            @_print result
+            callback result
 
-  print: () ->
-    $.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
+  _print: (result) ->
+    #$.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
     #http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling
-      console.log data
-      leg_end = []
-      
-      #start address
-      departure_string = data.routes[0].legs[0].start_address #get complete departure address
-      departure = departure_string.split ","; #split address at commas into array
-      start_wrap = '<div class="departure"><b>' + departure[0] + '</b><br/>' #name of place is bolded
-      for item in departure[1..] #rest of address
-        start_wrap += item + ',' #add ,'s back to address
-      start_wrap = start_wrap.substring 0,start_wrap.lastIndexOf(',') #remove the trailing comma
-      start_wrap += '<br/><br/></div>' #close the address div
-      $(start_wrap).appendTo 'div.directions' #begin directions formatting, start location
-      
-      #print total travel time
-        
-      #print directions
-      for leg,i in data.routes[0].legs
-        leg_end.push leg.end_address
-        leg_wrap = '<ol class="directions">'
-        $(leg_wrap).appendTo 'div.directions'
-        
-        #print each direction step
-        for step in leg.steps
-          instr_text = step.html_instructions.replace('<div>','<br/><span>')
-          instr_text = step.html_instructions.replace('</div>','</span>')
-          console.log instr_text
-          step_wrap = "<li>" + instr_text + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
-          $(step_wrap).appendTo 'ol.directions'
-        
-        #print leg time/distance
-        leg_wrap = '<div class="dist-time-lg">' + leg.distance.text + " - about " + leg.duration.text + "</div><hr><br/>"
-        $(leg_wrap).appendTo 'div.directions'
-        
-        #end address
-        arrival_string = leg.end_address #get complete address
-        arrival = arrival_string.split ","; #split address at commas
-        if i != data.routes[0].legs.length-1 #if a waypoint
-          end_wrap = '</ol><div class="waypoint"><b>' + arrival[i] + '</b><br/>' #name of place is bolded
-        else
-          end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>' #name of place is bolded
-        for item in arrival[1..] #rest of address
-          end_wrap += item + ',' #add commas back into address
-        end_wrap = end_wrap.substring 0,end_wrap.lastIndexOf(',') #remove the trailing comma
-        end_wrap += '<br/><br/></div>' #close div
-        $(end_wrap).appendTo 'div.directions' #write
+    console.log result
+
+    # Show route on map
+    @directionsDisplay.setDirections result
+
+    # Clear old directions
+    $(".directions").html("")
+
+    leg_end = []
+
+    #start address
+    departure_string = result.routes[0].legs[0].start_address #get complete departure address
+    departure = departure_string.split ","; #split address at commas into array
+    start_wrap = '<div class="departure"><b>' + departure[0] + '</b><br/>' #name of place is bolded
+    for item in departure[1..] #rest of address
+      start_wrap += item + ',' #add ,'s back to address
+    start_wrap = start_wrap.substring 0,start_wrap.lastIndexOf(',') #remove the trailing comma
+    start_wrap += '<br/><br/></div>' #close the address div
+    $(start_wrap).appendTo 'div.directions' #begin directions formatting, start location
+
+    #print total travel time
+
+    #print directions
+    for leg,i in result.routes[0].legs
+      leg_end.push leg.end_address
+      leg_wrap = '<ol class="directions">'
+      $(leg_wrap).appendTo 'div.directions'
+
+      #print each direction step
+      for step in leg.steps
+        instr_text = step.instructions.replace('<div>','<br/><span>')
+        instr_text = step.instructions.replace('</div>','</span>')
+        console.log instr_text
+        step_wrap = "<li>" + instr_text + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
+        $(step_wrap).appendTo 'ol.directions'
+
+      #print leg time/distance
+      leg_wrap = '<div class="dist-time-lg">' + leg.distance.text + " - about " + leg.duration.text + "</div><hr><br/>"
+      $(leg_wrap).appendTo 'div.directions'
+
+      #end address
+      arrival_string = leg.end_address #get complete address
+      arrival = arrival_string.split ","; #split address at commas
+      if i != result.routes[0].legs.length-1 #if a waypoint
+        end_wrap = '</ol><div class="waypoint"><b>' + arrival[i] + '</b><br/>' #name of place is bolded
+      else
+        end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>' #name of place is bolded
+      for item in arrival[1..] #rest of address
+        end_wrap += item + ',' #add commas back into address
+      end_wrap = end_wrap.substring 0,end_wrap.lastIndexOf(',') #remove the trailing comma
+      end_wrap += '<br/><br/></div>' #close div
+      $(end_wrap).appendTo 'div.directions' #write
 
 class Interface
   constructor: (@map, @fetcher, @nav) ->
-
+    $("#directions_form").submit (e) ->
+      e.preventDefault()
+      start = $("#start").val()
+      end = $("#end").val()
+      stops = $("#stops").val()
+      nav.calculate start, end, stops, (data) ->
+        console.log data
+      return false
 
 initialize = () ->
   loadWeather()
@@ -212,7 +262,6 @@ initialize = () ->
     fetcher.show map
     nav = new Navigator map, fetcher.stations, fetcher.destinations
     ui = new Interface map, fetcher, nav
-    nav.print()
 
 $(document).ready () =>
   initialize()
