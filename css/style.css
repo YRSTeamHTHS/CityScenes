@@ -128,12 +128,14 @@ body {
 
 .dist-time-total {
 	color:rgb(98, 98, 98);
-	font-size:18px;
-	text-align:right;
+	font-size:20px;
+	text-align:left;
 	background:url(../clock.png);
 	background-size: 30px 30px;
 	background-repeat:no-repeat;
 	padding-left:30px;
+	padding-top:5px;
+	padding-bottom:5px;
 }
 
 #directions_wrapper {
@@ -150,4 +152,10 @@ hr {
 	border-color:  rgb(168, 168, 168);
 	border: 0 none;
 	height:1px;
+}
+
+#help-button {
+	background:url(../question-mark.png);
+	background-size: 30px 30px;
+	background-repeat:no-repeat;
 }
