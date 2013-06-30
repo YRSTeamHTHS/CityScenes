@@ -96,7 +96,7 @@
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     google.maps.visualRefresh = true;
-    return map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+    return map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
   };
 
   Navigator = (function() {

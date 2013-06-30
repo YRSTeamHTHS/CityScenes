@@ -64,7 +64,7 @@ loadMap = () ->
     zoom: 12
     mapTypeId: google.maps.MapTypeId.ROADMAP
   google.maps.visualRefresh = true
-  map = new google.maps.Map document.getElementById("map-canvas"), mapOptions
+  map = new google.maps.Map document.getElementById("map_canvas"), mapOptions
 
 class Navigator
   navigate: () ->
