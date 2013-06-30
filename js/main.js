@@ -527,8 +527,8 @@
     Map.prototype.load = function() {
       var bikeLayer, mapOptions;
       mapOptions = {
-        center: new google.maps.LatLng(40.714346, -74.005966),
-        zoom: 12,
+        center: new google.maps.LatLng(40.7444123, -73.9935986),
+        zoom: 14,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
       google.maps.visualRefresh = true;

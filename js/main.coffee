@@ -342,8 +342,8 @@ class Display
 class Map
   load: () ->
     mapOptions =
-      center: new google.maps.LatLng(40.714346,-74.005966)
-      zoom: 12
+      center: new google.maps.LatLng(40.7444123,-73.9935986) # Center on Times Square
+      zoom: 14
       mapTypeId: google.maps.MapTypeId.ROADMAP
     google.maps.visualRefresh = true
     @gmap = new google.maps.Map document.getElementById("map_canvas"), mapOptions
