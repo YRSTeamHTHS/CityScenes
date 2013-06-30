@@ -26,11 +26,11 @@ class MapData
   @destinations = []
 
   fetch: (callback) ->
-    @_fetchStations (data) =>
+    @_fetchStations (err, data) =>
       @stations = data
-      @_fetchDestinations (data) =>
+      @_fetchDestinations (err, data) =>
         @destinations = data
-        callback()
+        callback null
 
   show: (map) ->
     p.show map for p in @stations
@@ -44,7 +44,7 @@ class MapData
         stationPoint = new Station stationData
         stationPoints.push stationPoint
 
-      callback(stationPoints)
+      callback null, stationPoints
 
   _fetchDestinations: (callback) ->
     $.get 'locations/filmdata.csv', (data) ->
@@ -54,11 +54,7 @@ class MapData
           itemWaypoint = new Waypoint item.latitude, item.longitude, item.title, item.description, markers.goldStar
           waypoints.push itemWaypoint
 
-        callback(waypoints)
-
-pinColors =
-  bikeAvailable: '00FF00'
-  bikeNotAvailable: '0000FF'
+        callback null, waypoints
 
 markers =
   film: "img/noun_project_16712.png"
@@ -79,21 +75,6 @@ markers =
     strokeColor: "gold",
     strokeWeight: 3
   }
-
-class colorPin
-  constructor: (@color = "FE7569") ->
-
-  pinImage: ->
-    new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|" + @color,
-      new google.maps.Size(21, 34),
-      new google.maps.Point(0,0),
-      new google.maps.Point(10, 34));
-
-  pinShadow: ->
-    new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_shadow",
-      new google.maps.Size(40, 37),
-      new google.maps.Point(0, 0),
-      new google.maps.Point(12, 35));
 
 loadWeather = () ->
   feedUrl = "http://weather.yahooapis.com/forecastrss?w=12761716&u=f"
@@ -125,7 +106,7 @@ class Navigator
   _directions: (options, callback) ->
     @directionsService.route options, (result, status) ->
       if status == google.maps.DirectionsStatus.OK
-        callback result
+        callback null, result
 
   _distance: (LatLng1, LatLng2) ->
     return Math.pow(LatLng1.lat() - LatLng2.lat(), 2) + Math.pow(LatLng1.lng() - LatLng2.lng(), 2)
@@ -149,7 +130,7 @@ class Navigator
   geocode: (address, callback) ->
     @geocoder.geocode {address: address}, (results, status) ->
       if status == google.maps.GeocoderStatus.OK
-        callback(results[0].geometry.location)
+        callback null, results[0].geometry.location
 
   nearestStation: (location) ->
     minDistance = Infinity
@@ -178,9 +159,9 @@ class Navigator
 
   calculate: (start, end, destinationCount, callback) ->
     # Geocode start and end points
-    @geocode start, (location) =>
+    @geocode start, (err, location) =>
       startLoc = location
-      @geocode end, (location) =>
+      @geocode end, (err, location) =>
         endLoc = location
 
         # Find nearest available bike stations to start and end points
@@ -192,7 +173,7 @@ class Navigator
           origin: startStation.location
           destination: endStation.location
           travelMode: google.maps.TravelMode.BICYCLING
-        @_directions options, (result) =>
+        @_directions options, (callback, result) =>
           # Search for waypoints along route
           DirectionsWaypoints = @_nearestDestinations(result.routes[0].overview_path, destinationCount)
 
@@ -203,9 +184,9 @@ class Navigator
             travelMode: google.maps.TravelMode.BICYCLING
             optimizeWaypoints: true
             waypoints: DirectionsWaypoints
-          @_directions options, (result) =>
+          @_directions options, (err, result) =>
             @_print result
-            callback result
+            callback null, result
 
   _print: (result) ->
     #$.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
@@ -280,7 +261,7 @@ class Interface
       start = $("#start").val()
       end = $("#end").val()
       stops = $("#stops").val()
-      nav.calculate start, end, stops, (data) ->
+      nav.calculate start, end, stops, (err, data) ->
         console.log data
       return false
 
@@ -288,7 +269,7 @@ initialize = () ->
   loadWeather()
   map = loadMap()
   fetcher = new MapData()
-  fetcher.fetch () ->
+  fetcher.fetch (err) ->
     fetcher.show map
     nav = new Navigator map, fetcher.stations, fetcher.destinations
     ui = new Interface map, fetcher, nav
