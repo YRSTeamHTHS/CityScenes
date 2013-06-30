@@ -186,3 +186,10 @@ hr {
 	width:25px;
 	margin-left:5px;
 }
+
+#app-icon {
+	margin-bottom:-15px;
+	margin-top:-9px;
+	margin-left:-10px;
+	margin-right:-10px;
+}
