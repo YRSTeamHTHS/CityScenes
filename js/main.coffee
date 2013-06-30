@@ -177,7 +177,9 @@ class Navigator
         
         #print each direction step
         for step in leg.steps
-          instr_text = step.html_instructions.replace('style=','class="nothing" style=')
+          instr_text = step.html_instructions.replace('<div>','<br/><span>')
+          instr_text = step.html_instructions.replace('</div>','</span>')
+          console.log instr_text
           step_wrap = "<li>" + instr_text + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
           $(step_wrap).appendTo 'ol.directions'
         
