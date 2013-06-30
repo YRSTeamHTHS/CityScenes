@@ -96,6 +96,7 @@ loadMap = () ->
 class Navigator
   constructor: (@map, @stations, @destinations) ->
     @directionsService = new google.maps.DirectionsService()
+    @geocoder = new google.maps.Geocoder();
 
   _directions: (options, callback) ->
     @directionsService.route options, (result, status) ->
@@ -105,21 +106,52 @@ class Navigator
   _distance: (LatLng1, LatLng2) ->
     return math.sqrt math.pow(LatLng1.lat() - LatLng2.lat(), 2) + math.pow(LatLng1.lng() - LatLng2.lng(), 2)
 
-  calculate: (options, callback) ->
-    # Find nearest available bike stations to start and end points
+  _sortArrayByDistance: (array) ->
+    compare = (a,b) ->
+      if a.distance < b.distance
+        return -1
+      if a.distance > b.distance
+        return 1
+      return 0
+    array.sort compare
+    return array
+
+  geocode: (address, callback) ->
+    @geocoder.geocode {address: address}, (results, status) ->
+      if status == google.maps.GeocoderStatus.OK
+        callback(results.geometry.location)
+
+  nearestStation: (location) ->
+    minDistance = Infinity
+    nearest = null
     for station in @stations
-      continue
+      distance = @_distance(station.location, location)
+      if distance < minDistance
+        nearest = station
+    return nearest
 
-    # Find direct biking route
-    options =
-      origin: options.start
-      destination: options.end
-      travelMode: google.maps.TravelMode.BIKING
-    @_directions options, (result) ->
-      console.log result
+  calculate: (start, end, destinationCount, callback) ->
+    # Geocode start and end points
+    @geocode start, (location) ->
+      startLoc = location
+      @geocode end, (location) ->
+        endLoc = location
 
-    # Search for waypoints along route
+        # Find nearest available bike stations to start and end points
+        startStation = nearestStation(startLoc)
+        endStation = nearestStation(endLoc)
 
+        # Find direct biking route
+        options =
+          origin: startStation.location
+          destination: endStation.location
+          travelMode: google.maps.TravelMode.BIKING
+        @_directions options, (result) ->
+          console.log result
+
+        # Search for waypoints along route
+
+  print: () ->
     $.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling', (data) ->
       leg_end = []
       departure = data.routes[0].legs[0].start_address
@@ -138,7 +170,8 @@ class Navigator
       leg_wrap = '</ol><div class="arrival">' + leg.end_address.replace(',','<br/>') + '</div>'
       $(leg_wrap).appendTo 'div.directions'
 
-  navigate: (callback) ->
+class Interface
+  constructor: (@map, @fetcher, @nav) ->
 
 
 initialize = () ->
@@ -148,6 +181,7 @@ initialize = () ->
   fetcher.fetch () ->
     fetcher.show map
     nav = new Navigator map, fetcher.stations, fetcher.destinations
+    ui = new Interface map, fetcher, nav
 
 $(document).ready () =>
   initialize()
