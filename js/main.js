@@ -158,14 +158,17 @@
   };
 
   loadMap = function() {
-    var map, mapOptions;
+    var bikeLayer, map, mapOptions;
     mapOptions = {
       center: new google.maps.LatLng(40.714346, -74.005966),
       zoom: 12,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     google.maps.visualRefresh = true;
-    return map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+    map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+    bikeLayer = new google.maps.BicyclingLayer();
+    bikeLayer.setMap(map);
+    return map;
   };
 
   Navigator = (function() {
