@@ -5,7 +5,7 @@ class Waypoint
   show: (map) ->
     options =
       position: @location
-      map: map
+      map: map.gmap
       title: @title
       icon: @icon
       shadow: @shadow
@@ -90,7 +90,7 @@ class Navigator
     @directionsService = new google.maps.DirectionsService()
     @geocoder = new google.maps.Geocoder()
     @directionsDisplay = new google.maps.DirectionsRenderer()
-    @directionsDisplay.setMap map
+    @directionsDisplay.setMap @map.gmap
 
   _directions: (options, callback) ->
     @directionsService.route options, (result, status) ->
@@ -262,23 +262,24 @@ class Display
 
   load: () ->
     loadWeather()
-    @map = @_loadMap()
+    @map = new Map()
+    @map.load()
     @fetcher = new DataFetcher()
     @fetcher.fetch (err, result) =>
       @fetcher.show @map
       @nav = new Navigator @map, result.stations, result.destinations
       @_initControls()
 
-  _loadMap: () ->
+class Map
+  load: () ->
     mapOptions =
       center: new google.maps.LatLng(40.714346,-74.005966)
       zoom: 12
       mapTypeId: google.maps.MapTypeId.ROADMAP
     google.maps.visualRefresh = true
-    map = new google.maps.Map document.getElementById("map_canvas"), mapOptions
+    @gmap = new google.maps.Map document.getElementById("map_canvas"), mapOptions
     bikeLayer = new google.maps.BicyclingLayer()
-    bikeLayer.setMap(map)
-    return map
+    bikeLayer.setMap(@gmap)
 
 initialize = () ->
   disp = new Display()
