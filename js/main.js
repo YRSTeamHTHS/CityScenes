@@ -180,23 +180,31 @@
 
     Navigator.prototype._directions = function(options, callback) {
       return this.directionsService.route(options, function(result, status) {
-        if (status === google.maps.DirectionStatus.OK) {
+        if (status === google.maps.DirectionsStatus.OK) {
           return callback(result);
         }
       });
     };
 
     Navigator.prototype._distance = function(LatLng1, LatLng2) {
-      return math.sqrt(math.pow(LatLng1.lat() - LatLng2.lat(), 2) + math.pow(LatLng1.lng() - LatLng2.lng(), 2));
+      return Math.pow(LatLng1.lat() - LatLng2.lat(), 2) + Math.pow(LatLng1.lng() - LatLng2.lng(), 2);
     };
 
-    Navigator.prototype._sortArrayByDistance = function(array) {
+    Navigator.prototype._distance_raw = function(a, b) {
+      return Math.pow(a[0] - b[0], 2) + Math.pow(a[1] - b[1], 2);
+    };
+
+    Navigator.prototype._LatLng_to_raw = function(LatLng) {
+      return [LatLng.lat(), LatLng.lng()];
+    };
+
+    Navigator.prototype._sort_array_by_distance = function(array) {
       var compare;
       compare = function(a, b) {
-        if (a.distance < b.distance) {
+        if (a[0] < b[0]) {
           return -1;
         }
-        if (a.distance > b.distance) {
+        if (a[0] > b[0]) {
           return 1;
         }
         return 0;
@@ -210,7 +218,7 @@
         address: address
       }, function(results, status) {
         if (status === google.maps.GeocoderStatus.OK) {
-          return callback(results.geometry.location);
+          return callback(results[0].geometry.location);
         }
       });
     };
@@ -225,77 +233,120 @@
         distance = this._distance(station.location, location);
         if (distance < minDistance) {
           nearest = station;
+          minDistance = distance;
         }
       }
       return nearest;
     };
 
+    Navigator.prototype._nearestDestinations = function(path, count) {
+      var DirectionsWaypoints, a, all, destination, i, list, point, _i, _j, _len, _len1, _ref;
+      all = [];
+      for (_i = 0, _len = path.length; _i < _len; _i++) {
+        point = path[_i];
+        a = [point.jb, point.kb];
+        list = [];
+        _ref = this.destinations;
+        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
+          destination = _ref[_j];
+          list.push([this._distance_raw(a, this._LatLng_to_raw(destination.location)), destination]);
+        }
+        list = this._sort_array_by_distance(list).slice(0, +count + 1 || 9e9);
+        all = all.concat(list);
+      }
+      all = this._sort_array_by_distance(all).slice(0, +count + 1 || 9e9);
+      DirectionsWaypoints = (function() {
+        var _k, _len2, _results;
+        _results = [];
+        for (_k = 0, _len2 = all.length; _k < _len2; _k++) {
+          i = all[_k];
+          _results.push({
+            location: i[1].location
+          });
+        }
+        return _results;
+      })();
+      console.log(DirectionsWaypoints);
+      return DirectionsWaypoints;
+    };
+
     Navigator.prototype.calculate = function(start, end, destinationCount, callback) {
+      var _this = this;
       return this.geocode(start, function(location) {
         var startLoc;
         startLoc = location;
-        return this.geocode(end, function(location) {
+        return _this.geocode(end, function(location) {
           var endLoc, endStation, options, startStation;
           endLoc = location;
-          startStation = nearestStation(startLoc);
-          endStation = nearestStation(endLoc);
+          startStation = _this.nearestStation(startLoc);
+          endStation = _this.nearestStation(endLoc);
           options = {
             origin: startStation.location,
             destination: endStation.location,
-            travelMode: google.maps.TravelMode.BIKING
+            travelMode: google.maps.TravelMode.BICYCLING
           };
-          return this._directions(options, function(result) {
-            return console.log(result);
+          return _this._directions(options, function(result) {
+            var DirectionsWaypoints;
+            DirectionsWaypoints = _this._nearestDestinations(result.routes[0].overview_path, destinationCount);
+            options = {
+              origin: startStation.location,
+              destination: endStation.location,
+              travelMode: google.maps.TravelMode.BICYCLING,
+              optimizeWaypoints: true,
+              waypoints: DirectionsWaypoints
+            };
+            return _this._directions(options, function(result) {
+              _this._print(result);
+              return callback(result);
+            });
           });
         });
       });
     };
 
-    Navigator.prototype.print = function() {
-      return $.getJSON('http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', function(data) {
-        var arrival, arrival_string, departure, departure_string, end_wrap, i, item, leg, leg_end, leg_wrap, start_wrap, step, step_wrap, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3, _results;
-        console.log(data);
-        leg_end = [];
-        departure_string = data.routes[0].legs[0].start_address;
-        departure = departure_string.split(",");
-        start_wrap = '<div class="departure"><b>' + departure[0] + '</b><br/>';
-        _ref = departure.slice(1);
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          item = _ref[_i];
-          start_wrap += item + ',';
+    Navigator.prototype._print = function(result) {
+      var arrival, arrival_string, departure, departure_string, end_wrap, i, item, leg, leg_end, leg_wrap, start_wrap, step, step_wrap, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3, _results;
+      console.log(result);
+      leg_end = [];
+      departure_string = result.routes[0].legs[0].start_address;
+      departure = departure_string.split(",");
+      start_wrap = '<div class="departure"><b>' + departure[0] + '</b><br/>';
+      _ref = departure.slice(1);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        item = _ref[_i];
+        start_wrap += item + ',';
+      }
+      start_wrap = start_wrap.substring(0, start_wrap.lastIndexOf(','));
+      start_wrap += '<br/><br/></div>';
+      $(start_wrap).appendTo('div.directions');
+      _ref1 = result.routes[0].legs;
+      _results = [];
+      for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
+        leg = _ref1[i];
+        leg_end.push(leg.end_address);
+        leg_wrap = '<ol class="directions">';
+        $(leg_wrap).appendTo('div.directions');
+        _ref2 = leg.steps;
+        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
+          step = _ref2[_k];
+          step_wrap = "<li>" + step.instructions + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
+          $(step_wrap).appendTo('ol.directions');
         }
-        start_wrap = start_wrap.substring(0, start_wrap.lastIndexOf(','));
-        start_wrap += '<br/><br/></div>';
-        $(start_wrap).appendTo('div.directions');
-        _ref1 = data.routes[0].legs;
-        _results = [];
-        for (i = _j = 0, _len1 = _ref1.length; _j < _len1; i = ++_j) {
-          leg = _ref1[i];
-          leg_end.push(leg.end_address);
-          leg_wrap = '<ol class="directions">';
-          $(leg_wrap).appendTo('div.directions');
-          _ref2 = leg.steps;
-          for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-            step = _ref2[_k];
-            step_wrap = "<li>" + step.html_instructions + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
-            $(step_wrap).appendTo('ol.directions');
-          }
-          leg_wrap = '<div class="dist-time-lg">' + leg.distance.text + " - about " + leg.duration.text + "</div><br/>";
-          $(leg_wrap).appendTo('div.directions');
-          arrival_string = leg.end_address;
-          arrival = arrival_string.split(",");
-          end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>';
-          _ref3 = arrival.slice(1);
-          for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
-            item = _ref3[_l];
-            end_wrap += item + ',';
-          }
-          end_wrap = end_wrap.substring(0, end_wrap.lastIndexOf(','));
-          end_wrap += '<br/><br/></div>';
-          _results.push($(end_wrap).appendTo('div.directions'));
+        leg_wrap = '<div class="dist-time-lg">' + leg.distance.text + " - about " + leg.duration.text + "</div><br/>";
+        $(leg_wrap).appendTo('div.directions');
+        arrival_string = leg.end_address;
+        arrival = arrival_string.split(",");
+        end_wrap = '</ol><div class="arrival"><b>' + arrival[i] + '</b><br/>';
+        _ref3 = arrival.slice(1);
+        for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
+          item = _ref3[_l];
+          end_wrap += item + ',';
         }
-        return _results;
-      });
+        end_wrap = end_wrap.substring(0, end_wrap.lastIndexOf(','));
+        end_wrap += '<br/><br/></div>';
+        _results.push($(end_wrap).appendTo('div.directions'));
+      }
+      return _results;
     };
 
     return Navigator;
@@ -308,6 +359,17 @@
       this.map = map;
       this.fetcher = fetcher;
       this.nav = nav;
+      $("#directions_form").submit(function(e) {
+        var end, start, stops;
+        e.preventDefault();
+        start = $("#start").val();
+        end = $("#end").val();
+        stops = $("#stops").val();
+        nav.calculate(start, end, stops, function(data) {
+          return console.log(data);
+        });
+        return false;
+      });
     }
 
     return Interface;
@@ -323,8 +385,7 @@
       var nav, ui;
       fetcher.show(map);
       nav = new Navigator(map, fetcher.stations, fetcher.destinations);
-      ui = new Interface(map, fetcher, nav);
-      return nav.print();
+      return ui = new Interface(map, fetcher, nav);
     });
   };
 

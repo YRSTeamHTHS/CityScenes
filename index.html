@@ -67,20 +67,21 @@
             <div class="full_height span3" id="sidebar">
                 <div class="container-fluid">
                     <div class="row-fluid">
-                        <form class="navbar-form">
-                            <input name="start" class="span12" type="text" placeholder="Start">
-                            <input name="end" class="span12" type="text" placeholder="End">
-                            <input name="stops" class="span12" type="range" min="0" max="8"
-                                   onchange="updateRangeInput(this.value);">
+                        <form id="directions_form">
+                            <input name="start" id="start" class="span12" type="text" placeholder="Start">
+                            <input name="end" id="end" class="span12" type="text" placeholder="End">
+                            <input name="stops" id="stops" class="span12" type="range" min="0" max="8" onchange="updateRangeInput(this.value);">
 
                             <div class="pull-right">
-                                <span id="rangeTextVal" class="span1">4 Destinations</span>
+                                <span id="rangeTextVal" class="span1"></span>
                             </div>
-							<br><br>
-                            <span><b>Types</b></span>
-							<label class="checkbox"><input type="checkbox" value="film">Film Locations</label>
 
-                            <button class="btn btn-warning span12" style="margin-left:0px">Get Directions</button>
+							<br><br>
+
+                            <span><b>Types</b></span>
+							<label class="checkbox"><input type="checkbox" name="film" id="film">Film Locations</label>
+
+                            <button class="btn btn-warning span12" style="margin-left:0" type="submit">Get Directions</button>
                         </form>
                     </div>
 					
