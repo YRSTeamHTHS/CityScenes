@@ -128,8 +128,12 @@ body {
 
 .dist-time-total {
 	color:rgb(98, 98, 98);
-	font-size:24px;
+	font-size:18px;
 	text-align:right;
+	background:url(../clock.png);
+	background-size: 30px 30px;
+	background-repeat:no-repeat;
+	padding-left:30px;
 }
 
 #directions_wrapper {
