@@ -43,7 +43,9 @@ class DataFetcher
     #stationClusterer = new MarkerClusterer map.gmap, stationArray
 
     destinationArray = (p.show map for p in @destinations)
-    destinationClusterer = new MarkerClusterer map.gmap, destinationArray
+    destinationClusterer = new MarkerClusterer map.gmap, destinationArray, {
+      minimumClusterSize: 3
+    }
 
 
   _fetchStations: (callback) ->

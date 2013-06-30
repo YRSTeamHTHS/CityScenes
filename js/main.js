@@ -112,7 +112,9 @@
         }
         return _results;
       }).call(this);
-      return destinationClusterer = new MarkerClusterer(map.gmap, destinationArray);
+      return destinationClusterer = new MarkerClusterer(map.gmap, destinationArray, {
+        minimumClusterSize: 3
+      });
     };
 
     DataFetcher.prototype._fetchStations = function(callback) {
