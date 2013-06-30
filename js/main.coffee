@@ -1,31 +1,58 @@
-plotFilms = (map) ->
-  $.get 'locations/filmdata.csv', (data) ->
-    $.csv.toObjects data, {}, (err, data) ->
-      for item in data
-        marker = new google.maps.Marker {
-          position: new google.maps.LatLng(item.LATITUDE,item.LONGITUDE)
-          map: map
-          title: item.Film
-          icon: pins.film
-        }
+class Waypoint
+  constructor: (lat, lng, @title, @description = "", @icon, @shadow) ->
+    @location = new google.maps.LatLng lat, lng
 
-plotBikes = (map) ->
-  pinAvailable = new colorPin pinColors.bikeAvailable
-  pinNotAvailable = new colorPin pinColors.bikeNotAvailable
-  $.getJSON 'bikedata.php', (data) ->
-    for station in data.stationBeanList
-      #console.log station
-      if station.availableBikes > 0 and station.statusValue == "In Service"
-        thisPin = pinAvailable
-      else
-        thisPin = pinNotAvailable
-      marker = new google.maps.Marker {
-        position: new google.maps.LatLng(station.latitude, station.longitude)
-        map: map
-        title: station.stationName
-        icon: thisPin.pinImage()
-        shadow: thisPin.pinShadow()
-      }
+  show: (map) ->
+    options =
+      position: @location
+      map: map
+      title: @title
+      icon: @icon
+      shadow: @shadow
+    marker = new google.maps.Marker options
+
+class Station extends Waypoint
+  constructor: (station) ->
+    if station.availableBikes > 0 and station.statusValue == "In Service"
+      thisPin = new colorPin pinColors.bikeAvailable
+    else
+      thisPin = new colorPin pinColors.bikeNotAvailable
+    super station.latitude, station.longitude, station.stationName, "", thisPin.pinImage(), thisPin.pinShadow()
+
+class MapData
+  @stations = []
+  @destinations = []
+
+  fetch: (callback) ->
+    @_fetchStations (data) =>
+      @stations = data
+      @_fetchDestinations (data) =>
+        @destinations = data
+        callback()
+
+  show: (map) ->
+    p.show map for p in @stations
+    p.show map for p in @destinations
+
+  _fetchStations: (callback) ->
+    $.getJSON 'bikedata.php', (data) ->
+      stationPoints = []
+
+      for stationData in data.stationBeanList
+        stationPoint = new Station stationData
+        stationPoints.push stationPoint
+
+      callback(stationPoints)
+
+  _fetchDestinations: (callback) ->
+    $.get 'locations/filmdata.csv', (data) ->
+      $.csv.toObjects data, {}, (err, data) ->
+        waypoints = []
+        for item in data
+          itemWaypoint = new Waypoint item.latitude, item.longitude, item.title, item.description, "img/noun_project_16712.png"
+          waypoints.push itemWaypoint
+
+        callback(waypoints)
 
 pinColors =
   bikeAvailable: '00FF00'
@@ -67,7 +94,32 @@ loadMap = () ->
   map = new google.maps.Map document.getElementById("map_canvas"), mapOptions
 
 class Navigator
-  navigate: () ->
+  constructor: (@map, @stations, @destinations) ->
+    @directionsService = new google.maps.DirectionsService()
+
+  _directions: (options, callback) ->
+    @directionsService.route options, (result, status) ->
+      if status == google.maps.DirectionStatus.OK
+        callback result
+
+  _distance: (LatLng1, LatLng2) ->
+    return math.sqrt math.pow(LatLng1.lat() - LatLng2.lat(), 2) + math.pow(LatLng1.lng() - LatLng2.lng(), 2)
+
+  calculate: (options, callback) ->
+    # Find nearest available bike stations to start and end points
+    for station in @stations
+      continue
+
+    # Find direct biking route
+    options =
+      origin: options.start
+      destination: options.end
+      travelMode: google.maps.TravelMode.BIKING
+    @_directions options, (result) ->
+      console.log result
+
+    # Search for waypoints along route
+
     $.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling', (data) ->
       leg_end = []
       start_wrap = '<span>' + data.routes[0].legs[0].start_address + '<br /><br /></span>'
@@ -85,15 +137,16 @@ class Navigator
           leg_wrap = '<br /></ol><span>' + leg.end_address + '</span>'
           $(leg_wrap).appendTo 'div.directions'
 
+  navigate: (callback) ->
+
+
 initialize = () ->
   loadWeather()
-
   map = loadMap()
-  plotFilms map
-  plotBikes map
-
-  nav = new Navigator
-  nav.navigate()
+  fetcher = new MapData()
+  fetcher.fetch () ->
+    fetcher.show map
+    nav = new Navigator map, fetcher.stations, fetcher.destinations
 
 $(document).ready () =>
   initialize()
