@@ -5,7 +5,7 @@ class Waypoint
   show: (map) ->
     options =
       position: @location
-      map: map
+      map: map.gmap
       title: @title
       icon: @icon
       shadow: @shadow
@@ -21,6 +21,10 @@ class Station extends Waypoint
       @available = false
     super station.latitude, station.longitude, station.stationName, "", thisMarker
 
+class DestinationPoint extends Waypoint
+  constructor: (@type, item) ->
+    super item.latitude, item.longitude, item.title, item.description, markers.goldStar
+
 class DataFetcher
   @stations = []
   @destinations = []
@@ -28,9 +32,10 @@ class DataFetcher
   fetch: (callback) ->
     @_fetchStations (err, data) =>
       @stations = data
-      @_fetchDestinations (err, data) =>
-        @destinations = data
-        callback null, {stations: @stations, destinations: @destinations}
+      @_fetchDestinations (err, destinations, destinationTypes) =>
+        @destinations = destinations
+        @destinationTypes = destinationTypes
+        callback null, {stations: @stations, destinations: @destinations, destinationTypes: @destinationTypes}
 
   show: (map) ->
     p.show map for p in @stations
@@ -47,13 +52,18 @@ class DataFetcher
       callback null, stationPoints
 
   _fetchDestinations: (callback) ->
-    $.get 'locations/filmdata.csv', (data) ->
-      $.csv.toObjects data, {}, (err, data) ->
+    $.getJSON 'locations/index.php', (data) =>
+      async.concat data, @_fetchDestinationFile, (err, results) ->
+        callback err, results, (i[0..-5] for i in data)
+
+  _fetchDestinationFile: (filename, callback) ->
+    type = filename[0..-5]
+    $.get 'locations/' + filename, (data) =>
+      $.csv.toObjects data, {}, (err, data) =>
         waypoints = []
         for item in data
-          itemWaypoint = new Waypoint item.latitude, item.longitude, item.title, item.description, markers.goldStar
+          itemWaypoint = new DestinationPoint type, item
           waypoints.push itemWaypoint
-
         callback null, waypoints
 
 markers =
@@ -95,11 +105,11 @@ loadWeather = () ->
       $(".weather-icon").attr('id','ico-snow');
     else $(".weather-icon").attr('id','ico-cloud');
 class Navigator
-  constructor: (@map, @stations, @destinations) ->
+  constructor: (@map, @stations, @destinations, @destinationTypes) ->
     @directionsService = new google.maps.DirectionsService()
     @geocoder = new google.maps.Geocoder()
     @directionsDisplay = new google.maps.DirectionsRenderer()
-    @directionsDisplay.setMap map
+    @directionsDisplay.setMap @map.gmap
 
   _directions: (options, callback) ->
     @directionsService.route options, (result, status) ->
@@ -141,22 +151,40 @@ class Navigator
           minDistance = distance
     return nearest
 
-  _nearestDestinations: (path, count) ->
+  _nearestDestinations: (path, count, types) ->
+    # Filter available list of destinations by desired type
+    availableDestinations = []
+    for destination in @destinations
+      if destination.type in types
+        availableDestinations.push destination
+
+    console.log "availableDestinations", availableDestinations
+
     all = []
     for point in path
       a = [point.jb, point.kb]
       list = []
-      for destination in @destinations
+      for destination in availableDestinations
         list.push [@_distance_raw(a, @_LatLng_to_raw(destination.location)), destination]
       list = @_sort_array_by_distance(list)[0..count]
       all = all.concat list
-    all = @_sort_array_by_distance(all)[0..count]
-    return (i[1] for i in all)
+    sortedDestinations = (i[1] for i in @_sort_array_by_distance(all))
+
+    console.log "sortedDestinations", sortedDestinations
+
+    uniqueDestinations = []
+    for destination in sortedDestinations
+      if destination not in uniqueDestinations and uniqueDestinations.length < count
+        uniqueDestinations.push destination
+
+    console.log "uniqueDestinations", uniqueDestinations
+
+    return uniqueDestinations
 
   _destinationsToDirectionsWaypoints: (destinations) ->
     return ({location: i.location} for i in destinations)
 
-  calculate: (start, end, destinationCount, callback) ->
+  calculate: (start, end, destinationCount, userDestinationTypes, callback) ->
     # Geocode start and end points
     @geocode start, (err, location) =>
       startLoc = location
@@ -174,7 +202,7 @@ class Navigator
           travelMode: google.maps.TravelMode.BICYCLING
         @_directions options, (err, result) =>
           # Search for waypoints along route
-          destinations = @_nearestDestinations(result.routes[0].overview_path, destinationCount)
+          destinations = @_nearestDestinations(result.routes[0].overview_path, destinationCount, userDestinationTypes)
           console.log "Destinations", destinations
           DirectionsWaypoints = @_destinationsToDirectionsWaypoints(destinations)
           console.log "DirectionsWaypoints", DirectionsWaypoints
@@ -227,7 +255,7 @@ class Navigator
     start_wrap = start_wrap.substring 0,start_wrap.lastIndexOf(',') #remove the trailing comma
     start_wrap += '<br/><br/></div>' #close the address div
     $(start_wrap).appendTo 'div.directions' #begin directions formatting, start location
-        
+
     #print directions
     for leg,i in result.routes[0].legs
       leg_end.push leg.end_address
@@ -259,35 +287,59 @@ class Navigator
       $(end_wrap).appendTo 'div.directions' #write
         
 class Display
+  constructor: () ->
+    @loading_modal = $("#loading_modal")
+    @loading_modal.modal()
+
   _initControls: () ->
+    # Show available destination types
+    $typeElem = $('<label class="checkbox type_checkbox"><input type="checkbox" checked><span class="type_label"></span></label>')
+    for type in @destinationTypes
+      $elem = $typeElem.clone()
+      $elem.find('.type_label').text(type)
+      $elem.find('input').attr('name', type)
+      $elem.appendTo('#destination_types')
+
     $("#directions_form").submit (e) =>
+      @loading_modal.modal("show")
       e.preventDefault()
       start = $("#start").val()
       end = $("#end").val()
       stops = $("#stops").val()
-      @nav.calculate start, end, stops, (err, data) =>
-        #console.log data
+
+      # Load desired destination types from form
+      types = []
+      $("#destination_types input").each () ->
+        if $(this).is(":checked")
+          types.push $(this).attr("name")
+
+      @nav.calculate start, end, stops, types, (err, data) =>
+        console.log data
+        @loading_modal.modal("hide")
       return false
 
   load: () ->
     loadWeather()
-    @map = @_loadMap()
+    @map = new Map()
+    @map.load()
     @fetcher = new DataFetcher()
     @fetcher.fetch (err, result) =>
       @fetcher.show @map
-      @nav = new Navigator @map, result.stations, result.destinations
+      @destinationTypes = result.destinationTypes
+      @nav = new Navigator @map, result.stations, result.destinations, result.destinationTypes
       @_initControls()
+      @loading_modal.modal("hide")
 
-  _loadMap: () ->
+class Map
+  load: () ->
     mapOptions =
       center: new google.maps.LatLng(40.714346,-74.005966)
       zoom: 12
       mapTypeId: google.maps.MapTypeId.ROADMAP
     google.maps.visualRefresh = true
-    map = new google.maps.Map document.getElementById("map_canvas"), mapOptions
+    @gmap = new google.maps.Map document.getElementById("map_canvas"), mapOptions
     bikeLayer = new google.maps.BicyclingLayer()
-    bikeLayer.setMap(map)
-    return map
+    bikeLayer.setMap(@gmap)
 
 initialize = () ->
   disp = new Display()
