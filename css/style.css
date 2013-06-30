@@ -117,8 +117,20 @@ body {
 .dist-time{
 	color:rgb(158, 158, 158);
 	font-size:12px;
+	text-align:right;
+}
+
+.dist-time-lg {
+	color:rgb(128, 128, 128);
+	font-size:14px;
+	text-align:right;
 }
 
 #directions_wrapper {
 	overflow:hidden;
 }
+
+#rangeTextVal {
+	width:100%;
+}
+
