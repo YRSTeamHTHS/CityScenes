@@ -134,3 +134,18 @@ body {
 	width:100%;
 }
 
+hr {
+	color: rgb(168, 168, 168);
+	background-color: rgb(168, 168, 168);
+	border-color:  rgb(168, 168, 168);
+	border: 0 none;
+	height:1px;
+}
+
+.nothing {
+	height:0;
+	width:0;
+	border:0;
+	padding:0;
+	margin:0;
+}
