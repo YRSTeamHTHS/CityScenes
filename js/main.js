@@ -329,8 +329,8 @@
         _ref2 = leg.steps;
         for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
           step = _ref2[_k];
-          instr_text = step.html_instructions.replace('<div>', '<br/><span>');
-          instr_text = step.html_instructions.replace('</div>', '</span>');
+          instr_text = step.instructions.replace('<div>', '<br/><span>');
+          instr_text = step.instructions.replace('</div>', '</span>');
           console.log(instr_text);
           step_wrap = "<li>" + instr_text + '<br/><div class="dist-time">' + step.distance.text + " - about " + step.duration.text + "</div></li>";
           $(step_wrap).appendTo('ol.directions');
