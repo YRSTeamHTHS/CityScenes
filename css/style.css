@@ -90,7 +90,7 @@ body {
 .departure {
 	font-size:18px;
 	color:black;
-	background:url(../departure.png);
+	background:url(../img/departure.png);
 	background-size:40px 40px;
 	background-repeat:no-repeat;
 	padding-left:40px;
@@ -99,7 +99,7 @@ body {
 .arrival {
 	font-size:18px;
 	color:black;
-	background:url(../arrival.png);
+	background:url(../img/arrival.png);
 	background-size:40px 40px;
 	background-repeat:no-repeat;
 	padding-left:40px;
@@ -108,7 +108,7 @@ body {
 .waypoint {
 	font-size:18px;
 	color:black;
-	background:url(../waypoint.png);
+	background:url(../img/waypoint.png);
 	background-size:40px 40px;
 	background-repeat:no-repeat;
 	padding-left:40px;
@@ -130,7 +130,7 @@ body {
 	color:rgb(98, 98, 98);
 	font-size:20px;
 	text-align:left;
-	background:url(../clock.png);
+	background:url(../img/clock.png);
 	background-size: 30px 30px;
 	background-repeat:no-repeat;
 	padding-left:33px;
@@ -155,7 +155,7 @@ hr {
 }
 
 #help-button {
-	background:url(../question-mark.png);
+	background:url(../img/question-mark.png);
 	background-size: 30px 30px;
 	background-repeat:no-repeat;
 	background-position:center;
@@ -184,7 +184,7 @@ hr {
 }
 
 #search-button {
-	background:url(../search.png);
+	background:url(../img/search.png);
 	background-size: 25px 25px;
 	background-repeat:no-repeat;
 	margin-top:8px;
@@ -226,27 +226,27 @@ hr {
 }
 
 #ico-cloud {
-	background:url(../cloud.png);	
+	background:url(../img/cloud.png);
   background-size: 40px 40px;
 }
 
 #ico-sun {
-	background:url(../sun.png);	
+	background:url(../img/sun.png);
   background-size: 40px 40px;
 }
 
 #ico-rain {
-	background:url(../rain.png);	
+	background:url(../img/rain.png);
   background-size: 40px 40px;
 }
 
 #ico-thunder {
-	background:url(../thunder.png);	
+	background:url(../img/thunder.png);
   background-size: 40px 40px;
 }
 
 #ico-snow {
-	background:url(../snow.png);	
+	background:url(../img/snow.png);
   background-size: 40px 40px;
 }
 
