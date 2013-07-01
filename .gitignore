@@ -1,1 +1,2 @@
-/bikedata/cache.json
+*.cache
+/.idea

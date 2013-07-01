@@ -190,23 +190,19 @@
   };
 
   loadWeather = function() {
-    var feedUrl, jsonUrl;
-    feedUrl = "http://weather.yahooapis.com/forecastrss?w=12761716&u=f";
-    jsonUrl = "https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&q=" + encodeURIComponent(feedUrl) + "&callback=?";
-    return $.getJSON(jsonUrl, function(data) {
-      var match, re, weatherString;
-      weatherString = data.responseData.feed.entries[0].contentSnippet;
-      re = /Current Conditions:\n(.*?)\n/;
-      match = weatherString.match(re);
+    return $.get('weatherdata/index.php', function(data) {
+      var code, match, re;
+      re = /(.*?)\n([0-9]{2}?)/;
+      match = data.match(re);
       $("#weather").text(match[1]);
-      match[1] = match[1].toLowerCase();
-      if (match[1].indexOf("fair") !== -1 || match[1].indexOf("sunny") !== -1 || match[1].indexOf("hot") !== -1 || match[1].indexOf("clear") !== -1) {
+      code = parseInt(match[2]);
+      if ($.inArray(code, [31, 32, 33, 34, 36, 24, 25]) !== -1) {
         return $(".weather-icon").attr('id', 'ico-sun');
-      } else if (match[1].indexOf("rain") !== -1 || match[1].indexOf("shower") !== -1 || match[1].indexOf("drizzle") !== -1) {
+      } else if ($.inArray(code, [1, 2, 5, 6, 8, 9, 10, 11, 12, 17, 18, 35, 40]) !== -1) {
         return $(".weather-icon").attr('id', 'ico-rain');
-      } else if (match[1].indexOf("thunder") !== -1) {
+      } else if ($.inArray(code, [3, 4, 37, 38, 39, 45, 47]) !== -1) {
         return $(".weather-icon").attr('id', 'ico-thunder');
-      } else if (match[1].indexOf("snow") !== -1) {
+      } else if ($.inArray(code, [13, 7, 14, 15, 16, 41, 42, 43, 46]) !== -1) {
         return $(".weather-icon").attr('id', 'ico-snow');
       } else {
         return $(".weather-icon").attr('id', 'ico-cloud');
@@ -471,8 +467,6 @@
 
     Navigator.prototype._printRoute = function(result, titles) {
       var arrival, arrival_string, departure, departure_string, end_wrap, i, instr_text, item, leg, leg_end, leg_wrap, start_wrap, step, step_wrap, waypoint_order, _i, _j, _k, _l, _len, _len1, _len2, _len3, _ref, _ref1, _ref2, _ref3, _results;
-      console.log("Printing result", result);
-      console.log("Printing titles", titles);
       leg_end = [];
       waypoint_order = result.routes[0].waypoint_order;
       departure_string = result.routes[0].legs[0].start_address;

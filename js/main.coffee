@@ -94,22 +94,20 @@ markers =
   }
 
 loadWeather = () ->
-  feedUrl = "http://weather.yahooapis.com/forecastrss?w=12761716&u=f"
-  jsonUrl = "https://ajax.googleapis.com/ajax/services/feed/load?v=1.0&q=" + encodeURIComponent(feedUrl) + "&callback=?"
-  $.getJSON jsonUrl, (data) ->
-    weatherString = data.responseData.feed.entries[0].contentSnippet
-    re = /Current Conditions:\n(.*?)\n/
-    match = weatherString.match re
+  $.get 'weatherdata/index.php', (data) ->
+    re = /(.*?)\n([0-9]{2}?)/
+    match = data.match re
     $("#weather").text match[1]
-    #change weather icon STREAMLINE TO WORK WITH INTEGER CODES
-    match[1] = match[1].toLowerCase();
-    if (match[1].indexOf("fair") !=-1 || match[1].indexOf("sunny") !=-1 || match[1].indexOf("hot")!=-1 || match[1].indexOf("clear") !=-1)
-      $(".weather-icon").attr('id','ico-sun');
-    else if (match[1].indexOf("rain") !=-1 || match[1].indexOf("shower") !=-1 || match[1].indexOf("drizzle") !=-1)
+    #change weather icon
+    code = parseInt match[2]
+    
+    if ($.inArray(code,[31,32,33,34,36,24,25]) !=-1)
+        $(".weather-icon").attr('id','ico-sun');
+    else if ($.inArray(code,[1,2,5,6,8,9,10,11,12,17,18,35,40]) !=-1) #rainy
       $(".weather-icon").attr('id','ico-rain');
-    else if (match[1].indexOf("thunder") !=-1)
+    else if ($.inArray(code,[3,4,37,38,39,45,47]) !=-1)
       $(".weather-icon").attr('id','ico-thunder');
-    else if (match[1].indexOf("snow") !=-1)
+    else if ($.inArray(code,[13,7,14,15,16,41,42,43,46]) !=-1)
       $(".weather-icon").attr('id','ico-snow');
     else $(".weather-icon").attr('id','ico-cloud');
 
@@ -299,10 +297,9 @@ class Navigator
 
   _printRoute: (result, titles) ->
     #$.getJSON 'http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&waypoints=30+Ludlow+St,NY|100+Canal+St,NY&sensor=false&mode=bicycling', (data) ->
-    #http://maps.googleapis.com/maps/api/directions/json?origin=Museum+Of+The+Moving+Image&destination=34+Ludlow+Street,NY&sensor=false&mode=bicycling
 
-    console.log "Printing result", result
-    console.log "Printing titles", titles
+    #console.log "Printing result", result
+    #console.log "Printing titles", titles
 
     leg_end = []
     waypoint_order = result.routes[0].waypoint_order

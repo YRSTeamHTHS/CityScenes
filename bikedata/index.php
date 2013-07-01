@@ -1,6 +1,6 @@
 <?php
 $cache_interval = 60;
-$cache_filename = "cache.json";
+$cache_filename = "cache.cache";
 //header('Content-Type: application/json');
 
 function load_new() {
@@ -19,7 +19,7 @@ function load_cache() {
     echo file_get_contents($cache_filename);
 }
 
-if (file_exists("cache.json")) {
+if (file_exists($cahce_filename)) {
     $cache_time = filemtime($cache_filename);
     $current_time = time();
     if ($current_time - $cache_time > $cache_interval || $cache_time > $current_time) {
