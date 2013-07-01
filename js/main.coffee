@@ -100,7 +100,8 @@ loadWeather = () ->
     match = weatherString.match re
     $("#weather").text match[1]
     #change weather icon STREAMLINE TO WORK WITH INTEGER CODES
-    if (match[1].indexOf("fair") !=-1 || match[1].indexOf("sunny") !=-1 || match[1].indexOf("hot")!=-1 || match[1].indexOf("clear" !=-1))
+    match[1] = match[1].toLowerCase();
+    if (match[1].indexOf("fair") !=-1 || match[1].indexOf("sunny") !=-1 || match[1].indexOf("hot")!=-1 || match[1].indexOf("clear") !=-1)
       $(".weather-icon").attr('id','ico-sun');
     else if (match[1].indexOf("rain") !=-1 || match[1].indexOf("shower") !=-1 || match[1].indexOf("drizzle") !=-1)
       $(".weather-icon").attr('id','ico-rain');
