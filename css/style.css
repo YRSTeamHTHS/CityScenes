@@ -260,6 +260,10 @@ hr {
   padding: 10px;
 }
 
+#github-button:hover {
+	background-color:rgba(0, 0, 0, 0.0470588);
+}
+
 #BICYCLING {
 
 }
