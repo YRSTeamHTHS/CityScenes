@@ -231,22 +231,22 @@ hr {
 }
 
 #ico-sun {
-	background:url(../img/sun.png);
+	background:url(../img/weather/sun.png);
   background-size: 40px 40px;
 }
 
 #ico-rain {
-	background:url(../img/rain.png);
+	background:url(../img/weather/rain.png);
   background-size: 40px 40px;
 }
 
 #ico-thunder {
-	background:url(../img/thunder.png);
+	background:url(../img/weather/thunder.png);
   background-size: 40px 40px;
 }
 
 #ico-snow {
-	background:url(../img/snow.png);
+	background:url(../img/weather/snow.png);
   background-size: 40px 40px;
 }
 
