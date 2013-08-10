@@ -87,7 +87,7 @@
     };
 
     DataFetcher.prototype.show = function(map) {
-      var destinationArray, destinationClusterer, i, p, stationArray, _i, _len;
+      var destinationArray, destinationClusterer, p, stationArray;
       stationArray = (function() {
         var _i, _len, _ref, _results;
         _ref = this.stations;
@@ -98,16 +98,12 @@
         }
         return _results;
       }).call(this);
-      for (_i = 0, _len = stationArray.length; _i < _len; _i++) {
-        i = stationArray[_i];
-        i.setVisibile(false);
-      }
       destinationArray = (function() {
-        var _j, _len1, _ref, _results;
+        var _i, _len, _ref, _results;
         _ref = this.destinations;
         _results = [];
-        for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-          p = _ref[_j];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          p = _ref[_i];
           _results.push(p.show(map));
         }
         return _results;
@@ -615,3 +611,7 @@
   });
 
 }).call(this);
+
+/*
+//@ sourceMappingURL=main.map
+*/
