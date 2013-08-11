@@ -214,6 +214,9 @@ hr {
 	user-select: none;
 }
 
+#weather {
+    color:white;
+}
 #weather:hover {
 	background-color:transparent;
 }
@@ -262,12 +265,4 @@ hr {
 
 #github-button:hover {
 	background-color:rgba(0, 0, 0, 0.0470588);
-}
-
-#BICYCLING {
-
-}
-
-#WALKING{
-
 }
